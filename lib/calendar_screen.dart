@@ -10,6 +10,8 @@ import '_plan.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:untitled1/user_info.dart';
 
 class CalendarScreen extends StatefulWidget {
   final DateTime? focusedDay;
@@ -18,7 +20,6 @@ class CalendarScreen extends StatefulWidget {
 
   const CalendarScreen(
       {super.key, this.focusedDay, this.selectedDay, required this.plans});
-
   @override
   State<CalendarScreen> createState() => _CalendarScreenState();
 }
@@ -30,6 +31,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   List<Plan> _plans = [];
   Plan? _selectedPlan;
   Timer? _debounce;
+  final firestoreInstance = FirebaseFirestore.instance;
 
   @override
   void initState() {
@@ -98,21 +100,22 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   Future<void> _retrievePlans() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonPlans = prefs.getStringList('plans') ?? [];
+    final userInfo = UserInfo();
+    String userEmail = userInfo.userEmail ?? '';
+    try {
+      final querySnapshot = await FirebaseFirestore.instance.collection(userEmail).get();
 
-    final plans = await compute(_parsePlans, jsonPlans);
+      final plans = querySnapshot.docs.map((doc) => Plan.fromJson(doc.data())).toList();
 
-    setState(() {
-      _plans = plans;
-    });
+      setState(() {
+        _plans = plans;
+      });
+    } catch (error) {
+      print('Error retrieving plans: $error');
+      // 에러 처리를 추가할 수 있습니다.
+    }
   }
 
-  List<Plan> _parsePlans(List<String> jsonPlans) {
-    return jsonPlans
-        .map((jsonPlan) => Plan.fromJson(jsonDecode(jsonPlan)))
-        .toList();
-  }
 
   List<Plan> _getPlansForDate(DateTime date) {
     return _plans

@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '_plan.dart';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:untitled1/user_info.dart';
 
 class PlanScreen extends StatefulWidget {
   final Plan? plan;
@@ -52,7 +54,6 @@ class _PlanScreenState extends State<PlanScreen> {
       _planType = 'Type 1';
     }
   }
-
   @override
   void dispose() {
     _planNameController.dispose();
@@ -60,9 +61,11 @@ class _PlanScreenState extends State<PlanScreen> {
     super.dispose();
   }
 
-  void _onSave() {
+  void _onSave() async{
+    final userInfo = UserInfo();
+    String userEmail = userInfo.userEmail ?? '';
     Plan updatedPlan = Plan(
-      id: widget.plan?.id ?? UniqueKey().toString(),
+      id: userEmail,
       name: _planNameController.text,
       startDate: _startDate,
       endDate: _endDate,
@@ -71,38 +74,21 @@ class _PlanScreenState extends State<PlanScreen> {
       type: _planType,
       details: _planDetailsController.text,
     );
-    widget.onPlanUpdated(updatedPlan);
-    _savePlans();
-    Navigator.of(context).pop();
-  }
+    try {
+      // Firestore 인스턴스 가져오기
+      final firestoreInstance = FirebaseFirestore.instance;
+      // 'plans' 컬렉션에 데이터 추가
+      await firestoreInstance.collection(updatedPlan.id).doc(updatedPlan.name).set(updatedPlan.toJson());
 
-  Future<void> _savePlans() async {
-    final prefs = await SharedPreferences.getInstance();
-    final plans = [
-      if (widget.plan != null)
-        widget.plan!.copyWith(
-          name: _planNameController.text,
-          startDate: _startDate,
-          endDate: _endDate,
-          startTime: _startTime,
-          endTime: _endTime,
-          type: _planType,
-          details: _planDetailsController.text,
-        )
-      else
-        Plan(
-          id: UniqueKey().toString(),
-          name: _planNameController.text,
-          startDate: _startDate,
-          endDate: _endDate,
-          startTime: _startTime,
-          endTime: _endTime,
-          type: _planType,
-          details: _planDetailsController.text,
-        ),
-    ];
-    final jsonPlans = plans.map((plan) => jsonEncode(plan.toJson())).toList();
-    await prefs.setStringList('plans', jsonPlans);
+      // 데이터 추가 후, 다음 작업 수행
+      widget.onPlanUpdated(updatedPlan);
+
+    } catch (e) {
+      // 오류 처리
+      print('Firestore에 데이터 추가 중 오류 발생: $e');
+      // 오류 메시지를 사용자에게 보여줄 수 있음
+    }
+    Navigator.of(context).pop();
   }
 
   void _showCupertinoTimePicker(BuildContext context, bool isStartTime) {
