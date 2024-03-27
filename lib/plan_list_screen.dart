@@ -79,17 +79,17 @@ class _PlanListScreenState extends State<PlanListScreen> {
     }
   }
 
-Future<void> deletePlanFromFirestore(String userEmail, String planId) async {
-  try {
-    await FirebaseFirestore.instance
-        .collection(userEmail)
-        .doc(planId)
-        .delete();
-  } catch (error) {
-    debugPrint('Error deleting plan: $error');
-    // 에러 처리를 추가할 수 있습니다.
+  Future<void> deletePlanFromFirestore(String userEmail, String planId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(userEmail)
+          .doc(planId)
+          .delete();
+    } catch (error) {
+      debugPrint('Error deleting plan: $error');
+      // 에러 처리를 추가할 수 있습니다.
+    }
   }
-}
 
   Future<void> _showDeleteConfirmationDialog(
       BuildContext context, Plan plan) async {
@@ -232,10 +232,13 @@ Future<void> deletePlanFromFirestore(String userEmail, String planId) async {
                                           String userEmail =
                                               userInfo.userEmail ?? '';
 
-                                          await deletePlanFromFirestore(userEmail, plan.id);
+                                          await deletePlanFromFirestore(
+                                              userEmail, plan.id);
 
                                           _persistPlans();
-                                          Navigator.pop(context);
+                                          if (context.mounted) {
+                                            Navigator.pop(context);
+                                          }
                                         },
                                         child: const Text('OK'),
                                       ),
@@ -268,10 +271,13 @@ Future<void> deletePlanFromFirestore(String userEmail, String planId) async {
                                           String userEmail =
                                               userInfo.userEmail ?? '';
 
-                                          await deletePlanFromFirestore(userEmail, plan.id);
+                                          await deletePlanFromFirestore(
+                                              userEmail, plan.id);
 
                                           _persistPlans();
-                                          Navigator.pop(context);
+                                          if (context.mounted) {
+                                            Navigator.pop(context);
+                                          }
                                         },
                                         child: const Text('OK'),
                                       ),
