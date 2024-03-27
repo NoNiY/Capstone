@@ -4,6 +4,8 @@ import 'package:untitled1/plan_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '_plan.dart';
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:untitled1/user_info.dart';
 
 class PlanListScreen extends StatefulWidget {
   final List<Plan> plans;
@@ -51,34 +53,47 @@ class _PlanListScreenState extends State<PlanListScreen> {
     });
   }
 
-void _showPlanScreen(BuildContext context, Plan? plan) async {
-  final result = await Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => PlanScreen(
-        plan: plan,
-        onPlanUpdated: (updatedPlan) {
-          setState(() {
-            if (plan != null) {
-              _plans.removeWhere((p) => p.id == updatedPlan.id);
-            }
-            _plans.add(updatedPlan);
-          });
-          _persistPlans();
-        },
-        initialDate: plan?.startDate ?? widget.initialDate ?? DateTime.now(),
+  void _showPlanScreen(BuildContext context, Plan? plan) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PlanScreen(
+          plan: plan,
+          onPlanUpdated: (updatedPlan) {
+            setState(() {
+              if (plan != null) {
+                _plans.removeWhere((p) => p.id == updatedPlan.id);
+              }
+              _plans.add(updatedPlan);
+            });
+            _persistPlans();
+          },
+          initialDate: plan?.startDate ?? widget.initialDate ?? DateTime.now(),
+        ),
       ),
-    ),
-  );
-  if (result != null) {
-    setState(() {
-      _plans = List<Plan>.from(result);
-    });
+    );
+    if (result != null) {
+      setState(() {
+        _plans = List<Plan>.from(result);
+      });
+    }
+  }
+
+Future<void> deletePlanFromFirestore(String userEmail, String planId) async {
+  try {
+    await FirebaseFirestore.instance
+        .collection(userEmail)
+        .doc(planId)
+        .delete();
+  } catch (error) {
+    debugPrint('Error deleting plan: $error');
+    // 에러 처리를 추가할 수 있습니다.
   }
 }
 
-  void _showDeleteConfirmationDialog(BuildContext context, Plan plan) {
-    showDialog(
+  Future<void> _showDeleteConfirmationDialog(
+      BuildContext context, Plan plan) async {
+    final result = await showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -88,24 +103,31 @@ void _showPlanScreen(BuildContext context, Plan? plan) async {
             TextButton(
               child: const Text('No'),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context, false);
               },
             ),
             TextButton(
               child: const Text('Yes'),
               onPressed: () {
-                setState(() {
-                  _plans.removeWhere((p) => p.id == plan.id);
-                  _selectedPlan = null;
-                });
-                _persistPlans();
-                Navigator.pop(context);
+                Navigator.pop(context, true);
               },
             ),
           ],
         );
       },
     );
+
+    if (result == true) {
+      setState(() {
+        _plans.removeWhere((p) => p.id == plan.id);
+        _selectedPlan = null;
+      });
+
+      final userInfo = UserInfo();
+      String userEmail = userInfo.userEmail ?? '';
+
+      await deletePlanFromFirestore(userEmail, plan.id);
+    }
   }
 
   Widget _buildFloatingActionButton(BuildContext context) {
@@ -120,7 +142,8 @@ void _showPlanScreen(BuildContext context, Plan? plan) async {
           ),
           const SizedBox(height: 10),
           FloatingActionButton(
-            onPressed: () => _showDeleteConfirmationDialog(context, _selectedPlan!),
+            onPressed: () =>
+                _showDeleteConfirmationDialog(context, _selectedPlan!),
             backgroundColor: Colors.red,
             heroTag: null,
             child: const Icon(Icons.delete),
@@ -198,10 +221,19 @@ void _showPlanScreen(BuildContext context, Plan? plan) async {
                                         'You have successfully completed the plan.'),
                                     actions: [
                                       TextButton(
-                                        onPressed: () {
+                                        onPressed: () async {
                                           setState(() {
-                                            _plans.removeAt(index);
+                                            _plans.removeWhere(
+                                                (p) => p.id == plan.id);
+                                            _selectedPlan = null;
                                           });
+
+                                          final userInfo = UserInfo();
+                                          String userEmail =
+                                              userInfo.userEmail ?? '';
+
+                                          await deletePlanFromFirestore(userEmail, plan.id);
+
                                           _persistPlans();
                                           Navigator.pop(context);
                                         },
@@ -225,10 +257,19 @@ void _showPlanScreen(BuildContext context, Plan? plan) async {
                                         'Keep pushing forward. You can do it!'),
                                     actions: [
                                       TextButton(
-                                        onPressed: () {
+                                        onPressed: () async {
                                           setState(() {
-                                            _plans.removeAt(index);
+                                            _plans.removeWhere(
+                                                (p) => p.id == plan.id);
+                                            _selectedPlan = null;
                                           });
+
+                                          final userInfo = UserInfo();
+                                          String userEmail =
+                                              userInfo.userEmail ?? '';
+
+                                          await deletePlanFromFirestore(userEmail, plan.id);
+
                                           _persistPlans();
                                           Navigator.pop(context);
                                         },
