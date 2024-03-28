@@ -165,7 +165,7 @@ class _MainScreenState extends State<MainScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => logout(),
+                      builder: (context) => const LogoutScreen(),
                     ),
                   );
                   // 아이콘 버튼을 눌렀을 때의 동작

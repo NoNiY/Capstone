@@ -76,15 +76,28 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  void _deletePlan() {
-    if (_selectedPlan != null) {
-      setState(() {
-        _plans.removeWhere((plan) => plan.id == _selectedPlan!.id);
-        _selectedPlan = null;
-      });
-      _persistPlans();
+Future<void> _deletePlan() async {
+  if (_selectedPlan != null) {
+    String planId = _selectedPlan!.id;
+    setState(() {
+      _plans.removeWhere((plan) => plan.id == planId);
+      _selectedPlan = null;
+    });
+
+    final userInfo = UserInfo();
+    String userEmail = userInfo.userEmail ?? '';
+
+    try {
+      await FirebaseFirestore.instance
+          .collection(userEmail)
+          .doc(planId)
+          .delete();
+    } catch (error) {
+      debugPrint('Error deleting plan: $error');
+      // 에러 처리를 추가할 수 있습니다.
     }
   }
+}
 
   void _persistPlansDebounced() {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
@@ -111,7 +124,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         _plans = plans;
       });
     } catch (error) {
-      print('Error retrieving plans: $error');
+      debugPrint('Error retrieving plans: $error');
       // 에러 처리를 추가할 수 있습니다.
     }
   }
