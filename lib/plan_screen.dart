@@ -30,7 +30,8 @@ class _PlanScreenState extends State<PlanScreen> {
   late TimeOfDay _startTime;
   late TimeOfDay _endTime;
   late String _planType;
-
+  final point = 0 ;
+  
   @override
   void initState() {
     super.initState();

@@ -24,6 +24,7 @@ class PlanListScreen extends StatefulWidget {
 class _PlanListScreenState extends State<PlanListScreen> {
   late List<Plan> _plans;
   Plan? _selectedPlan;
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -160,142 +161,194 @@ class _PlanListScreenState extends State<PlanListScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Plan List'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context, _plans);
-          },
-        ),
-      ),
-      body: ListView.builder(
-        itemCount: _plans.length,
-        itemBuilder: (context, index) {
-          final plan = _plans[index];
-          final isLongTermPlan = plan.startDate != plan.endDate;
-          return GestureDetector(
-            onDoubleTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CalendarScreen(
-                    focusedDay: plan.startDate,
-                    selectedDay: plan.startDate,
-                    plans: _plans,
-                  ),
-                ),
-              );
-            },
-            onLongPress: () => _showPlanScreen(context, plan),
-            onTap: () {
-              setState(() {
-                _selectedPlan = _selectedPlan == plan ? null : plan;
-              });
-            },
-            child: Container(
-              color: _selectedPlan == plan ? Colors.grey[300] : null,
-              child: ListTile(
-                title: Text(plan.name),
-                subtitle: Text(
-                  isLongTermPlan
-                      ? '${plan.startDate.toIso8601String().split('T').first} - ${plan.endDate.toIso8601String().split('T').first}\n${plan.details.split('\n').first}'
-                      : '${plan.startDate.toIso8601String().split('T').first}/${plan.startTime.format(context)}\n${plan.details.split('\n').first}',
-                ),
-                trailing: plan.type == 'Type 2' || plan.type == 'Type 3'
-                    ? Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.check),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: const Text('Congratulations!'),
-                                    content: const Text(
-                                        'You have successfully completed the plan.'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () async {
-                                          setState(() {
-                                            _plans.removeWhere(
-                                                (p) => p.id == plan.id);
-                                            _selectedPlan = null;
-                                          });
+  Future<List<Plan>> _searchPlansOnFirestore(String query) async {
+    final userInfo = UserInfo();
+    String userEmail = userInfo.userEmail ?? '';
 
-                                          final userInfo = UserInfo();
-                                          String userEmail =
-                                              userInfo.userEmail ?? '';
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection(userEmail)
+        .where('name', isGreaterThanOrEqualTo: query)
+        .where('name', isLessThan: '$query\uf8ff')
+        .get();
 
-                                          await deletePlanFromFirestore(
-                                              userEmail, plan.id);
+    return querySnapshot.docs.map((doc) => Plan.fromJson(doc.data())).toList();
+  }
 
-                                          _persistPlans();
-                                          if (context.mounted) {
-                                            Navigator.pop(context);
-                                          }
-                                        },
-                                        child: const Text('OK'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: const Text('Don\'t Give Up!'),
-                                    content: const Text(
-                                        'Keep pushing forward. You can do it!'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () async {
-                                          setState(() {
-                                            _plans.removeWhere(
-                                                (p) => p.id == plan.id);
-                                            _selectedPlan = null;
-                                          });
-
-                                          final userInfo = UserInfo();
-                                          String userEmail =
-                                              userInfo.userEmail ?? '';
-
-                                          await deletePlanFromFirestore(
-                                              userEmail, plan.id);
-
-                                          _persistPlans();
-                                          if (context.mounted) {
-                                            Navigator.pop(context);
-                                          }
-                                        },
-                                        child: const Text('OK'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ],
-                      )
-                    : null,
-              ),
-            ),
-          );
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text('Plan List'),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () {
+          Navigator.pop(context, _plans);
         },
       ),
-      floatingActionButton: _buildFloatingActionButton(context),
-    );
-  }
+    ),
+    body: Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            onChanged: (value) {
+              setState(() {
+                _searchQuery = value;
+              });
+            },
+            decoration: const InputDecoration(
+              labelText: 'Search',
+              prefixIcon: Icon(Icons.search),
+            ),
+          ),
+        ),
+        Expanded(
+          child: FutureBuilder<List<Plan>>(
+            future: _searchPlansOnFirestore(_searchQuery),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              }
+              final filteredPlans = snapshot.data ?? [];
+              return filteredPlans.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: filteredPlans.length,
+                      itemBuilder: (context, index) {
+                        final plan = filteredPlans[index];
+                        final isLongTermPlan = plan.startDate != plan.endDate;
+                        return GestureDetector(
+                          onDoubleTap: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CalendarScreen(
+                                  focusedDay: plan.startDate,
+                                  selectedDay: plan.startDate,
+                                  plans: _plans,
+                                ),
+                              ),
+                            );
+                          },
+                          onLongPress: () => _showPlanScreen(context, plan),
+                          onTap: () {
+                            setState(() {
+                              _selectedPlan = _selectedPlan == plan ? null : plan;
+                            });
+                          },
+                          child: Container(
+                            color: _selectedPlan == plan ? Colors.grey[300] : null,
+                            child: ListTile(
+                              title: Text(plan.name),
+                              subtitle: Text(
+                                isLongTermPlan
+                                    ? '${plan.startDate.toIso8601String().split('T').first} - ${plan.endDate.toIso8601String().split('T').first}\n${plan.details.split('\n').first}'
+                                    : '${plan.startDate.toIso8601String().split('T').first}/${plan.startTime.format(context)}\n${plan.details.split('\n').first}',
+                              ),
+                              trailing: plan.type == 'Type 2' || plan.type == 'Type 3'
+                                  ? Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.check),
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: const Text('Congratulations!'),
+                                                  content: const Text(
+                                                      'You have successfully completed the plan.'),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () async {
+                                                        setState(() {
+                                                          _plans.removeWhere(
+                                                              (p) => p.id == plan.id);
+                                                          _selectedPlan = null;
+                                                        });
+
+                                                        final userInfo = UserInfo();
+                                                        String userEmail =
+                                                            userInfo.userEmail ?? '';
+
+                                                        await deletePlanFromFirestore(
+                                                            userEmail, plan.id);
+
+                                                        _persistPlans();
+                                                        if (context.mounted) {
+                                                          Navigator.pop(context);
+                                                        }
+                                                      },
+                                                      child: const Text('OK'),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.close),
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: const Text('Don\'t Give Up!'),
+                                                  content: const Text(
+                                                      'Keep pushing forward. You can do it!'),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () async {
+                                                        setState(() {
+                                                          _plans.removeWhere(
+                                                              (p) => p.id == plan.id);
+                                                          _selectedPlan = null;
+                                                        });
+
+                                                        final userInfo = UserInfo();
+                                                        String userEmail =
+                                                            userInfo.userEmail ?? '';
+
+                                                        await deletePlanFromFirestore(
+                                                            userEmail, plan.id);
+
+                                                        _persistPlans();
+                                                        if (context.mounted) {
+                                                          Navigator.pop(context);
+                                                        }
+                                                      },
+                                                      child: const Text('OK'),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    )
+                                  : null,
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  : Center(
+                      child: Text(
+                        'No plans found for "$_searchQuery"',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    );
+            },
+          ),
+        ),
+      ],
+    ),
+    floatingActionButton: _buildFloatingActionButton(context),
+  );
+}
 }
