@@ -4,7 +4,7 @@ import 'package:untitled1/Plan/calendar_screen.dart';
 import 'package:untitled1/Plan/_plan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'package:untitled1/log_out.dart';
+import 'package:untitled1/main/log_out.dart';
 import 'package:untitled1/chat/chat_room.dart';
 
 class MainScreen extends StatefulWidget {
