@@ -182,6 +182,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_chat_bubble:
+    dependency: "direct main"
+    description:
+      name: flutter_chat_bubble
+      sha256: ede33df7237fea3d89464c8493bfa0bee2f94f50fd097ebd30c517c3c0d4fcf9
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.2"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -288,6 +296,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.11.0"
+  modal_progress_hud_nsn:
+    dependency: "direct main"
+    description:
+      name: modal_progress_hud_nsn
+      sha256: "7d1b2eb50da63c994f8ec2da5738183dbc8235a528e840ecbf67439adb7a6cc2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.1"
   nested:
     dependency: transitive
     description:

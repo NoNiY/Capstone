@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+<<<<<<< HEAD:lib/main_screen.dart
 import 'package:untitled1/calendar_screen.dart';
 import 'package:untitled1/_plan.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:untitled1/log_out.dart';
 import 'package:untitled1/shop_screen.dart';
+=======
+import 'package:untitled1/Plan/calendar_screen.dart';
+import 'package:untitled1/Plan/_plan.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:untitled1/main/log_out.dart';
+import 'package:untitled1/chat/chat_room.dart';
+>>>>>>> e53fe7a9ee2ffdeaf99ba914218af6187fb9a710:lib/main/main_screen.dart
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -156,6 +165,12 @@ class _MainScreenState extends State<MainScreen> {
               IconButton(
                 icon: const Icon(Icons.group, size: 40),
                 onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ChatScreen(),
+                    ),
+                  );
                   // 아이콘 버튼을 눌렀을 때의 동작
                 },
               ),
