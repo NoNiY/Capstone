@@ -5,6 +5,8 @@ export 'package:untitled1/user_info.dart';
 class UserInfo with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? _user;
+  DateTime _startDate = DateTime.now();
+  DateTime _endDate = DateTime.now();
 
   UserInfo() {
     _user = _auth.currentUser;
@@ -15,6 +17,10 @@ class UserInfo with ChangeNotifier {
   }
 
   User? get user => _user;
-
   String? get userEmail => _user?.email;
+
+  DateTime get startDate => _startDate;
+
+  DateTime get endDate => _endDate;
+
 }
