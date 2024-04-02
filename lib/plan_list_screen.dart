@@ -25,6 +25,7 @@ class _PlanListScreenState extends State<PlanListScreen> {
   late List<Plan> _plans;
   Plan? _selectedPlan;
   String _searchQuery = '';
+  String? _selectedPlanId;
 
   @override
   void initState() {
@@ -238,7 +239,7 @@ Widget _buildPlanList(List<Plan> plans) {
         onLongPress: () => _showPlanScreen(context, plan),
         onTap: () => _toggleSelectedPlan(plan),
         child: Container(
-          color: _selectedPlan == plan ? Colors.grey[300] : null,
+          color: _selectedPlanId == plan.id ? Colors.grey[300] : null,
           child: ListTile(
             title: Text(plan.name),
             subtitle: Text(
@@ -362,7 +363,7 @@ void _navigateToCalendarScreen(Plan plan) {
 
 void _toggleSelectedPlan(Plan plan) {
   setState(() {
-    _selectedPlan = _selectedPlan == plan ? null : plan;
+    _selectedPlanId = _selectedPlanId == plan.id ? null : plan.id;
   });
 }
 }
