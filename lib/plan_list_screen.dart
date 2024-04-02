@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:untitled1/calendar_screen.dart';
 import 'package:untitled1/plan_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '_plan.dart';
-import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:untitled1/user_info.dart';
 
@@ -24,36 +22,42 @@ class PlanListScreen extends StatefulWidget {
 class _PlanListScreenState extends State<PlanListScreen> {
   late List<Plan> _plans;
   Plan? _selectedPlan;
-  String _searchQuery = '';
-  String? _selectedPlanId;
+  final String _searchQuery = '';
+  List<Plan> _filteredPlans = [];
 
   @override
   void initState() {
-    super.initState();
-    _plans = List<Plan>.from(widget.plans);
-    _retrievePlans();
-  }
+  super.initState();
+  _plans = List<Plan>.from(widget.plans);
+  _filteredPlans = List<Plan>.from(_plans);
+  _retrievePlansFromFirestore();
+}
 
-  Future<void> _persistPlans() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonPlans =
-        widget.plans.map((plan) => jsonEncode(plan.toJson())).toList();
-    await prefs.setStringList('plans', jsonPlans);
-  }
+Future<List<Plan>> _searchPlansOnFirestore(String query) async {
+  final userInfo = UserInfo();
+  String userEmail = userInfo.userEmail ?? '';
 
-  Future<void> _retrievePlans() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonPlans = prefs.getStringList('plans') ?? [];
+  final querySnapshot = await FirebaseFirestore.instance
+      .collection(userEmail)
+      .where('name', isGreaterThanOrEqualTo: query)
+      .where('name', isLessThan: '$query\uf8ff')
+      .get();
 
-    final plans = jsonPlans
-        .map((jsonPlan) => Plan.fromJson(jsonDecode(jsonPlan)))
-        .toList();
+  return querySnapshot.docs.map((doc) => Plan.fromJson(doc.data())).toList();
+}
 
-    setState(() {
-      widget.plans.clear();
-      widget.plans.addAll(plans);
-    });
-  }
+Future<void> _retrievePlansFromFirestore() async {
+  final userInfo = UserInfo();
+  String userEmail = userInfo.userEmail ?? '';
+
+  final querySnapshot =
+      await FirebaseFirestore.instance.collection(userEmail).get();
+
+  setState(() {
+    _plans = querySnapshot.docs.map((doc) => Plan.fromJson(doc.data())).toList();
+    _filteredPlans = List<Plan>.from(_plans);
+  });
+}
 
   void _showPlanScreen(BuildContext context, Plan? plan) async {
     final result = await Navigator.push(
@@ -68,16 +72,13 @@ class _PlanListScreenState extends State<PlanListScreen> {
               }
               _plans.add(updatedPlan);
             });
-            _persistPlans();
           },
           initialDate: plan?.startDate ?? widget.initialDate ?? DateTime.now(),
         ),
       ),
     );
     if (result != null) {
-      setState(() {
-        _plans = List<Plan>.from(result);
-      });
+      await _retrievePlansFromFirestore();
     }
   }
 
@@ -129,6 +130,7 @@ class _PlanListScreenState extends State<PlanListScreen> {
       String userEmail = userInfo.userEmail ?? '';
 
       await deletePlanFromFirestore(userEmail, plan.id);
+      await _retrievePlansFromFirestore();
     }
   }
 
@@ -162,18 +164,12 @@ class _PlanListScreenState extends State<PlanListScreen> {
     }
   }
 
-  Future<List<Plan>> _searchPlansOnFirestore(String query) async {
-    final userInfo = UserInfo();
-    String userEmail = userInfo.userEmail ?? '';
-
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection(userEmail)
-        .where('name', isGreaterThanOrEqualTo: query)
-        .where('name', isLessThan: '$query\uf8ff')
-        .get();
-
-    return querySnapshot.docs.map((doc) => Plan.fromJson(doc.data())).toList();
-  }
+Future<void> _filterPlans(String query) async {
+  final filteredPlans = await _searchPlansOnFirestore(query);
+  setState(() {
+    _filteredPlans = filteredPlans;
+  });
+}
 
 @override
 Widget build(BuildContext context) {
@@ -189,22 +185,10 @@ Widget build(BuildContext context) {
       children: [
         _buildSearchField(),
         Expanded(
-          child: FutureBuilder<List<Plan>>(
-            future: _searchPlansOnFirestore(_searchQuery),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
-              final filteredPlans = snapshot.data ?? [];
-              return filteredPlans.isNotEmpty
-                  ? _buildPlanList(filteredPlans)
-                  : _buildNoPlansFound();
-            },
-          ),
-        ),
+              child: _filteredPlans.isNotEmpty
+              ? _buildPlanList(_filteredPlans)
+              : _buildNoPlansFound(),
+            ),
       ],
     ),
     floatingActionButton: _buildFloatingActionButton(context),
@@ -215,10 +199,8 @@ Widget _buildSearchField() {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: TextField(
-      onChanged: (value) {
-        setState(() {
-          _searchQuery = value;
-        });
+      onChanged: (value) async {
+        await _filterPlans(value);
       },
       decoration: const InputDecoration(
         labelText: 'Search',
@@ -227,7 +209,6 @@ Widget _buildSearchField() {
     ),
   );
 }
-
 Widget _buildPlanList(List<Plan> plans) {
   return ListView.builder(
     itemCount: plans.length,
@@ -239,7 +220,7 @@ Widget _buildPlanList(List<Plan> plans) {
         onLongPress: () => _showPlanScreen(context, plan),
         onTap: () => _toggleSelectedPlan(plan),
         child: Container(
-          color: _selectedPlanId == plan.id ? Colors.grey[300] : null,
+          color: _selectedPlan == plan ? Colors.grey[300] : null,
           child: ListTile(
             title: Text(plan.name),
             subtitle: Text(
@@ -285,8 +266,7 @@ Future<void> _showCompletionDialog(BuildContext context, Plan plan) async {
               String userEmail = userInfo.userEmail ?? '';
 
               await deletePlanFromFirestore(userEmail, plan.id);
-
-              _persistPlans();
+              await _retrievePlansFromFirestore();
               if (context.mounted) {
                 Navigator.pop(context);
               }
@@ -318,8 +298,7 @@ Future<void> _showIncompleteDialog(BuildContext context, Plan plan) async {
               String userEmail = userInfo.userEmail ?? '';
 
               await deletePlanFromFirestore(userEmail, plan.id);
-
-              _persistPlans();
+              await _retrievePlansFromFirestore();
               if (context.mounted) {
                 Navigator.pop(context);
               }
@@ -363,7 +342,7 @@ void _navigateToCalendarScreen(Plan plan) {
 
 void _toggleSelectedPlan(Plan plan) {
   setState(() {
-    _selectedPlanId = _selectedPlanId == plan.id ? null : plan.id;
+    _selectedPlan = _selectedPlan == plan ? null : plan;
   });
 }
 }
