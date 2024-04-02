@@ -4,6 +4,7 @@ import 'package:untitled1/calendar_screen.dart';
 import 'package:untitled1/_plan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:untitled1/log_out.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -18,7 +19,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getCurrentUser();
   }
@@ -161,6 +161,12 @@ class _MainScreenState extends State<MainScreen> {
               IconButton(
                 icon: const Icon(Icons.settings, size: 40),
                 onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LogoutScreen(),
+                    ),
+                  );
                   // 아이콘 버튼을 눌렀을 때의 동작
                 },
               ),

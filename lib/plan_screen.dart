@@ -30,7 +30,8 @@ class _PlanScreenState extends State<PlanScreen> {
   late TimeOfDay _startTime;
   late TimeOfDay _endTime;
   late String _planType;
-
+  final point = 0 ;
+  
   @override
   void initState() {
     super.initState();
@@ -54,6 +55,7 @@ class _PlanScreenState extends State<PlanScreen> {
       _planType = 'Type 1';
     }
   }
+
   @override
   void dispose() {
     _planNameController.dispose();
@@ -61,35 +63,41 @@ class _PlanScreenState extends State<PlanScreen> {
     super.dispose();
   }
 
-  void _onSave() async{
-    final userInfo = UserInfo();
-    String userEmail = userInfo.userEmail ?? '';
-    Plan updatedPlan = Plan(
-      id: userEmail,
-      name: _planNameController.text,
-      startDate: _startDate,
-      endDate: _endDate,
-      startTime: _startTime,
-      endTime: _endTime,
-      type: _planType,
-      details: _planDetailsController.text,
-    );
-    try {
-      // Firestore 인스턴스 가져오기
-      final firestoreInstance = FirebaseFirestore.instance;
-      // 'plans' 컬렉션에 데이터 추가
-      await firestoreInstance.collection(updatedPlan.id).doc(updatedPlan.name).set(updatedPlan.toJson());
-
-      // 데이터 추가 후, 다음 작업 수행
-      widget.onPlanUpdated(updatedPlan);
-
-    } catch (e) {
-      // 오류 처리
-      print('Firestore에 데이터 추가 중 오류 발생: $e');
-      // 오류 메시지를 사용자에게 보여줄 수 있음
+void _onSave() async {
+  final userInfo = UserInfo();
+  String userEmail = userInfo.userEmail ?? '';
+  String planId = widget.plan?.id ?? DateTime.now().millisecondsSinceEpoch.toString();
+  Plan updatedPlan = Plan(
+    id: planId,
+    name: _planNameController.text,
+    startDate: _startDate,
+    endDate: _endDate,
+    startTime: _startTime,
+    endTime: _endTime,
+    type: _planType,
+    details: _planDetailsController.text,
+  );
+  try {
+    final firestoreInstance = FirebaseFirestore.instance;
+    if (widget.plan != null) {
+      await firestoreInstance
+          .collection(userEmail)
+          .doc(planId)
+          .update(updatedPlan.toJson());
+    } else {
+      await firestoreInstance
+          .collection(userEmail)
+          .doc(planId)
+          .set(updatedPlan.toJson());
     }
+    widget.onPlanUpdated(updatedPlan);
+  } catch (e) {
+    debugPrint('Firestore에 데이터 추가 중 오류 발생: $e');
+  }
+  if (mounted) {
     Navigator.of(context).pop();
   }
+}
 
   void _showCupertinoTimePicker(BuildContext context, bool isStartTime) {
     showDialog(

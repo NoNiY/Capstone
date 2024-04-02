@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:untitled1/user_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 export 'package:untitled1/user_info.dart';
 
