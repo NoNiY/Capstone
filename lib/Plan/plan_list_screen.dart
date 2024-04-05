@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD:lib/plan_list_screen.dart
-import 'package:untitled1/calendar_screen.dart';
-import 'package:untitled1/plan_screen.dart';
-=======
+import 'package:untitled1/Plan/_plan.dart';
 import 'package:untitled1/Plan/calendar_screen.dart';
 import 'package:untitled1/Plan/plan_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
->>>>>>> e53fe7a9ee2ffdeaf99ba914218af6187fb9a710:lib/Plan/plan_list_screen.dart
-import '_plan.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:untitled1/user_info.dart';
 

@@ -5,10 +5,10 @@ import 'package:flutter/foundation.dart';
 
 
 class NewMessage extends StatefulWidget {
-  const NewMessage({Key? key}) : super(key: key);
+  const NewMessage({super.key});
 
   @override
-  _NewMessageState createState() => _NewMessageState();
+  State<NewMessage> createState() => _NewMessageState();
 }
 
 class _NewMessageState extends State<NewMessage> {
@@ -40,15 +40,15 @@ class _NewMessageState extends State<NewMessage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 8),
-      padding: EdgeInsets.all(8),
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.all(8),
       child: Row(
         children: [
           Expanded(
             child: TextField(
               maxLines: null,
               controller: _controller,
-              decoration: InputDecoration(labelText: 'Send a message...'),
+              decoration: const InputDecoration(labelText: 'Send a message...'),
               onChanged: (value) {
                 setState(() {
                   _userEnterMessage = value;
@@ -58,7 +58,7 @@ class _NewMessageState extends State<NewMessage> {
           ),
           IconButton(
             onPressed: _userEnterMessage.trim().isEmpty ? null : _sendMessage,
-            icon: Icon(Icons.send),
+            icon: const Icon(Icons.send),
             color: Colors.blue,
           ),
         ],

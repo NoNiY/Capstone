@@ -6,7 +6,7 @@ import 'package:untitled1/Plan/plan_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '_plan.dart';
+import 'package:untitled1/Plan/_plan.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
