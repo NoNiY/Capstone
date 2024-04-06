@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:untitled1/shop_screen.dart';
 import 'package:untitled1/Plan/calendar_screen.dart';
 import 'package:untitled1/Plan/_plan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,6 +38,16 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
+  Future<List<Plan>> getPlansFromFirestore() async {
+    final userEmail = loggedUser?.email;
+    if (userEmail != null) {
+      final querySnapshot =
+          await FirebaseFirestore.instance.collection(userEmail).get();
+      return querySnapshot.docs.map((doc) => Plan.fromJson(doc.data())).toList();
+    }
+    return [];
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -53,7 +65,14 @@ class _MainScreenState extends State<MainScreen> {
             IconButton(
               icon: const Icon(Icons.shopping_cart, size: 40),
               onPressed: () {
-                // 오른쪽 아이콘을 눌렀을 때의 동작
+                if (context.mounted){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ShopScreen()
+                    )
+                  );
+                }
               },
             ),
           ],
@@ -126,11 +145,7 @@ class _MainScreenState extends State<MainScreen> {
                   size: 40,
                 ),
                 onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  final jsonPlans = prefs.getStringList('plans') ?? [];
-                  final plans = jsonPlans
-                      .map((jsonPlan) => Plan.fromJson(jsonDecode(jsonPlan)))
-                      .toList();
+                  final plans = await getPlansFromFirestore();
                   if (context.mounted) {
                     Navigator.push(
                       context,
@@ -138,7 +153,7 @@ class _MainScreenState extends State<MainScreen> {
                         builder: (context) => CalendarScreen(plans: plans),
                       ),
                     );
-                  } // 아이콘 버튼을 눌렀을 때의 동작
+                  }
                 },
               ),
               IconButton(
@@ -174,7 +189,6 @@ class _MainScreenState extends State<MainScreen> {
                       builder: (context) => const LogoutScreen(),
                     ),
                   );
-                  // 아이콘 버튼을 눌렀을 때의 동작
                 },
               ),
             ],

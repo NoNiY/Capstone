@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '_plan.dart';
-import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:untitled1/user_info.dart';
@@ -96,7 +94,7 @@ class _PlanScreenState extends State<PlanScreen> {
       debugPrint('Firestore에 데이터 추가 중 오류 발생: $e');
     }
     if (mounted) {
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
     }
   }
 
