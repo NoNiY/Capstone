@@ -6,20 +6,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:untitled1/main/log_out.dart';
 import 'package:untitled1/chat/chat_room.dart';
+import 'package:untitled1/shop_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key, this.characterImage}) : super(key: key);
+  const MainScreen({super.key});
 
-  final String? characterImage;
 
   @override
   State<MainScreen> createState() => _MainScreenState();
-}
-class MainScreen2 extends StatefulWidget{
-  const MainScreen2({Key? key, this.backgroundImage}) : super(key: key);
-  final String? backgroundImage;
-  @override
-  _MainScreenState createState() => _MainScreenState();
 }
 class _MainScreenState extends State<MainScreen> {
   final _authentication = FirebaseAuth.instance;
@@ -60,6 +54,14 @@ class _MainScreenState extends State<MainScreen> {
             IconButton(
               icon: const Icon(Icons.shopping_cart, size: 40),
               onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return ShopScreen();
+                    },
+                  ),
+                );
                 // 오른쪽 아이콘을 눌렀을 때의 동작
               },
             ),
@@ -169,7 +171,7 @@ class _MainScreenState extends State<MainScreen> {
               IconButton(
                 icon: const Icon(Icons.person_outline, size: 40),
                 onPressed: () {
-                  // 아이콘 버튼을 눌렀을 때의 동작
+
                 },
               ),
               IconButton(
