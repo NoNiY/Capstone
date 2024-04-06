@@ -73,7 +73,6 @@ flutter:
     - assets/images/shop_logo.png
     - assets/character/
     - assets/background/
-    - assets/item/
     - assets/red.jpg
     - assets/coming_soon.png
   # The following line ensures that the Material Icons font is

@@ -30,7 +30,7 @@ class _NewMessageState extends State<NewMessage> {
     FocusScope.of(context).unfocus();
     FirebaseFirestore.instance.collection('chatting').add({
       'text' : _userEnterMessage,
-      'time' : Timestamp.now(),
+      'time': FieldValue.serverTimestamp(),
       'userID' : userEmail,
       'userName' : username
     });
