@@ -58,32 +58,6 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        /*appBar: AppBar(
-          elevation: 4,
-          backgroundColor: Colors.blueGrey,
-          leading: IconButton(
-            icon: const Icon(Icons.person_add_alt, size: 40),
-            onPressed: () {
-              // 왼쪽 아이콘을 눌렀을 때의 동작
-            },
-          ),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.shopping_cart, size: 40),
-              onPressed: () {
-                if (context.mounted){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ShopScreen()
-                    )
-                  );
-                }
-              },
-            ),
-          ],
-        ),
-        */
         body: Expanded(
           child: Center(
             child: Column(
@@ -140,80 +114,6 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
         ),
-        // 하단바
-        /*
-        bottomNavigationBar: BottomAppBar(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              IconButton(
-                icon: const Icon(
-                  Icons.description,
-                  size: 40,
-                ),
-                onPressed: () async {
-                  final plans = await getPlansFromFirestore();
-                  if (context.mounted) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CalendarScreen(plans: plans),
-                      ),
-                    );
-                  }
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.group, size: 40),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ChatScreen(),
-                    ),
-                  );
-                  // 아이콘 버튼을 눌렀을 때의 동작
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.home, size: 40),
-                onPressed: () {
-                  // 아이콘 버튼을 눌렀을 때의 동작
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.person_outline, size: 40),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        // main_screen에서 main_character로 이동할 때 이미지 전달
-                        return MainCharacterScreen(
-                          characterImage: _currentCharacterImage,
-                          backgroundImage: _currentBackgroundImage,
-                        );
-                      },
-                    ),
-                  );
-                  // 아이콘 버튼을 눌렀을 때의 동작
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.settings, size: 40),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LogoutScreen(),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-    */
       ),
     );
   }

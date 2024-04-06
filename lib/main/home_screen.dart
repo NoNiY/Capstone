@@ -5,7 +5,7 @@ import 'package:untitled1/character/main_character.dart';
 import 'package:untitled1/chat/TeamPlan_Screen.dart';
 import 'package:untitled1/main/log_out.dart';
 import 'package:untitled1/main/main_screen.dart';
-
+import 'package:untitled1/shop_screen.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -32,7 +32,6 @@ class _HomePageState extends State<HomePage> {
         leading: IconButton(
           icon: const Icon(Icons.person_add_alt, size: 40),
           onPressed: () {
-
             // 왼쪽 아이콘을 눌렀을 때의 동작
           },
         ),
@@ -40,6 +39,14 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.shopping_cart, size: 40),
             onPressed: () {
+              if (context.mounted){
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ShopScreen()
+                    )
+                );
+              }
               // 오른쪽 아이콘을 눌렀을 때의 동작
             },
           ),
