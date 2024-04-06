@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:untitled1/blank_screen.dart';
-import 'package:untitled1/main_screen.dart';
-import 'package:untitled1/plan_list_screen.dart';
-import 'package:untitled1/plan_screen.dart';
+import 'package:untitled1/main/main_screen.dart';
+import 'package:untitled1/Plan/plan_list_screen.dart';
+import 'package:untitled1/Plan/plan_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -176,8 +176,11 @@ Future<void> _deletePlan() async {
           const SizedBox(height: 16),
         ],
       ),
+      /*
       bottomNavigationBar: _buildBottomAppBar(),
       appBar: _buildAppBar(),
+      */
+
     );
   }
 
@@ -438,7 +441,7 @@ Future<void> _deletePlan() async {
       ],
     );
   }
-
+/*
   Widget _buildBottomAppBar() {
     return BottomAppBar(
       child: Row(
@@ -519,7 +522,7 @@ Future<void> _deletePlan() async {
       ],
     );
   }
-
+*/
   void _showMonthPicker() {
     final currentYear = DateTime.now().year;
 

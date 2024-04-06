@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:untitled1/config/palette.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:untitled1/main_screen.dart';
+import 'package:untitled1/main/home_screen.dart';
+import 'package:untitled1/main/main_screen.dart';
 
 class LoginSignupScreen extends StatefulWidget {
   const LoginSignupScreen({super.key});
@@ -446,7 +447,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) {
-                                  return const MainScreen();
+                                  return HomePage();
                                 },
                               ),
                             );}
@@ -478,7 +479,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) {
-                                  return const MainScreen();
+                                  return HomePage();
                                 },
                               ),
                             );}

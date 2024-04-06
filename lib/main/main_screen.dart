@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:untitled1/calendar_screen.dart';
-import 'package:untitled1/_plan.dart';
+import 'package:untitled1/Plan/calendar_screen.dart';
+import 'package:untitled1/Plan/_plan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'package:untitled1/log_out.dart';
+import 'package:untitled1/main/log_out.dart';
+import 'package:untitled1/chat/chat_room.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -19,7 +20,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getCurrentUser();
   }
@@ -40,7 +40,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
+        /*appBar: AppBar(
           elevation: 4,
           backgroundColor: Colors.blueGrey,
           leading: IconButton(
@@ -58,6 +58,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ],
         ),
+        */
         body: Expanded(
           child: Center(
             child: Column(
@@ -116,6 +117,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ),
         // 하단바
+              /*
         bottomNavigationBar: BottomAppBar(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -144,6 +146,12 @@ class _MainScreenState extends State<MainScreen> {
               IconButton(
                 icon: const Icon(Icons.group, size: 40),
                 onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ChatScreen(),
+                    ),
+                  );
                   // 아이콘 버튼을 눌렀을 때의 동작
                 },
               ),
@@ -174,6 +182,7 @@ class _MainScreenState extends State<MainScreen> {
             ],
           ),
         ),
+    */
       ),
     );
   }
