@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '_plan.dart';
-import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:untitled1/user_info.dart';
@@ -30,6 +28,7 @@ class _PlanScreenState extends State<PlanScreen> {
   late TimeOfDay _startTime;
   late TimeOfDay _endTime;
   late String _planType;
+  final point = 0;
 
   @override
   void initState() {
@@ -62,41 +61,42 @@ class _PlanScreenState extends State<PlanScreen> {
     super.dispose();
   }
 
-void _onSave() async {
-  final userInfo = UserInfo();
-  String userEmail = userInfo.userEmail ?? '';
-  String planId = widget.plan?.id ?? DateTime.now().millisecondsSinceEpoch.toString();
-  Plan updatedPlan = Plan(
-    id: planId,
-    name: _planNameController.text,
-    startDate: _startDate,
-    endDate: _endDate,
-    startTime: _startTime,
-    endTime: _endTime,
-    type: _planType,
-    details: _planDetailsController.text,
-  );
-  try {
-    final firestoreInstance = FirebaseFirestore.instance;
-    if (widget.plan != null) {
-      await firestoreInstance
-          .collection(userEmail)
-          .doc(planId)
-          .update(updatedPlan.toJson());
-    } else {
-      await firestoreInstance
-          .collection(userEmail)
-          .doc(planId)
-          .set(updatedPlan.toJson());
+  void _onSave() async {
+    final userInfo = UserInfo();
+    String userEmail = userInfo.userEmail ?? '';
+    String planId =
+        widget.plan?.id ?? DateTime.now().millisecondsSinceEpoch.toString();
+    Plan updatedPlan = Plan(
+      id: planId,
+      name: _planNameController.text,
+      startDate: _startDate,
+      endDate: _endDate,
+      startTime: _startTime,
+      endTime: _endTime,
+      type: _planType,
+      details: _planDetailsController.text,
+    );
+    try {
+      final firestoreInstance = FirebaseFirestore.instance;
+      if (widget.plan != null) {
+        await firestoreInstance
+            .collection(userEmail)
+            .doc(planId)
+            .update(updatedPlan.toJson());
+      } else {
+        await firestoreInstance
+            .collection(userEmail)
+            .doc(planId)
+            .set(updatedPlan.toJson());
+      }
+      widget.onPlanUpdated(updatedPlan);
+    } catch (e) {
+      debugPrint('Firestore에 데이터 추가 중 오류 발생: $e');
     }
-    widget.onPlanUpdated(updatedPlan);
-  } catch (e) {
-    debugPrint('Firestore에 데이터 추가 중 오류 발생: $e');
+    if (mounted) {
+      Navigator.of(context).pop(true);
+    }
   }
-  if (mounted) {
-    Navigator.of(context).pop();
-  }
-}
 
   void _showCupertinoTimePicker(BuildContext context, bool isStartTime) {
     showDialog(
@@ -175,96 +175,90 @@ void _onSave() async {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TextField(
-              controller: _planNameController,
-              decoration: const InputDecoration(
-                labelText: 'Plan Name',
-              ),
-            ),
+            _buildTextField(_planNameController, 'Plan Name'),
             const SizedBox(height: 16.0),
-            TextField(
-              controller: _planDetailsController,
-              decoration: const InputDecoration(
-                labelText: 'Plan Details',
-              ),
-              maxLines: 3,
-            ),
+            _buildTextField(_planDetailsController, 'Plan Details',
+                maxLines: 3),
             const SizedBox(height: 16.0),
-            ListTile(
-              title: const Text('Start Date'),
-              subtitle: Text(
-                  '${_startDate.year}/${_startDate.month}/${_startDate.day}'),
-              onTap: () async {
-                final DateTime? picked = await showDatePicker(
-                  context: context,
-                  initialDate: _startDate,
-                  firstDate: DateTime(2023),
-                  lastDate: DateTime(2030),
-                );
-                if (picked != null && picked != _startDate) {
-                  setState(() {
-                    _startDate = picked;
-                    if (_startDate.isAfter(_endDate)) {
-                      _endDate = _startDate;
-                    }
-                  });
-                }
-              },
-            ),
-            ListTile(
-              title: const Text('End Date'),
-              subtitle:
-                  Text('${_endDate.year}/${_endDate.month}/${_endDate.day}'),
-              onTap: () async {
-                final DateTime? picked = await showDatePicker(
-                  context: context,
-                  initialDate: _endDate,
-                  firstDate: _startDate,
-                  lastDate: DateTime(2030),
-                );
-                if (picked != null && picked != _endDate) {
-                  setState(() {
-                    _endDate = picked;
-                  });
-                }
-              },
-            ),
-            ListTile(
-              title: const Text('Start Time'),
-              subtitle: Text(_startTime.format(context)),
-              onTap: () => _showCupertinoTimePicker(
-                  context, true), // Start Time 설정을 위해 수정
-            ),
-            ListTile(
-              title: const Text('End Time'),
-              subtitle: Text(_endTime.format(context)),
-              onTap: () => _showCupertinoTimePicker(
-                  context, false), // End Time 설정을 위해 수정
-            ),
-            DropdownButtonFormField<String>(
-              value: _planType,
-              onChanged: (String? newValue) {
-                setState(() {
-                  _planType = newValue!;
-                });
-              },
-              items: <String>['Type 1', 'Type 2', 'Type 3']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              decoration: const InputDecoration(
-                labelText: 'Plan Type',
-              ),
-            ),
+            _buildDatePicker('Start Date', _startDate, true),
+            _buildDatePicker('End Date', _endDate, false),
+            _buildTimePicker('Start Time', _startTime, true),
+            _buildTimePicker('End Time', _endTime, false),
+            _buildDropdownButton(),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _onSave,
         child: const Icon(Icons.save),
+      ),
+    );
+  }
+
+  Widget _buildTextField(
+    TextEditingController controller,
+    String labelText, {
+    int maxLines = 1,
+  }) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(labelText: labelText),
+      maxLines: maxLines,
+    );
+  }
+
+  Widget _buildDatePicker(String title, DateTime date, bool isStartDate) {
+    return ListTile(
+      title: Text(title),
+      subtitle: Text('${date.year}/${date.month}/${date.day}'),
+      onTap: () async {
+        final DateTime? picked = await showDatePicker(
+          context: context,
+          initialDate: date,
+          firstDate: isStartDate ? DateTime(2023) : _startDate,
+          lastDate: DateTime(2030),
+        );
+        if (picked != null && picked != date) {
+          setState(() {
+            if (isStartDate) {
+              _startDate = picked;
+              if (_startDate.isAfter(_endDate)) {
+                _endDate = _startDate;
+              }
+            } else {
+              _endDate = picked;
+            }
+          });
+        }
+      },
+    );
+  }
+
+  Widget _buildTimePicker(String title, TimeOfDay time, bool isStartTime) {
+    return ListTile(
+      title: Text(title),
+      subtitle: Text(time.format(context)),
+      onTap: () => _showCupertinoTimePicker(context, isStartTime),
+    );
+  }
+
+  Widget _buildDropdownButton() {
+    return DropdownButtonFormField<String>(
+      value: _planType,
+      onChanged: (String? newValue) {
+        setState(() {
+          _planType = newValue!;
+        });
+      },
+      items: <String>['Type 1', 'Type 2', 'Type 3']
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      decoration: const InputDecoration(
+        labelText: 'Plan Type',
       ),
     );
   }

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:untitled1/calendar_screen.dart';
-import 'package:untitled1/_plan.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:untitled1/shop_screen.dart';
+import 'package:untitled1/Plan/calendar_screen.dart';
+import 'package:untitled1/Plan/_plan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'package:untitled1/log_out.dart';
+import 'package:untitled1/main/log_out.dart';
+import 'package:untitled1/chat/chat_room.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -19,7 +22,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getCurrentUser();
   }
@@ -34,6 +36,16 @@ class _MainScreenState extends State<MainScreen> {
     } catch (e) {
       debugPrint(e as String?);
     }
+  }
+
+  Future<List<Plan>> getPlansFromFirestore() async {
+    final userEmail = loggedUser?.email;
+    if (userEmail != null) {
+      final querySnapshot =
+          await FirebaseFirestore.instance.collection(userEmail).get();
+      return querySnapshot.docs.map((doc) => Plan.fromJson(doc.data())).toList();
+    }
+    return [];
   }
 
   @override
@@ -53,7 +65,14 @@ class _MainScreenState extends State<MainScreen> {
             IconButton(
               icon: const Icon(Icons.shopping_cart, size: 40),
               onPressed: () {
-                // 오른쪽 아이콘을 눌렀을 때의 동작
+                if (context.mounted){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ShopScreen()
+                    )
+                  );
+                }
               },
             ),
           ],
@@ -126,11 +145,7 @@ class _MainScreenState extends State<MainScreen> {
                   size: 40,
                 ),
                 onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  final jsonPlans = prefs.getStringList('plans') ?? [];
-                  final plans = jsonPlans
-                      .map((jsonPlan) => Plan.fromJson(jsonDecode(jsonPlan)))
-                      .toList();
+                  final plans = await getPlansFromFirestore();
                   if (context.mounted) {
                     Navigator.push(
                       context,
@@ -138,12 +153,18 @@ class _MainScreenState extends State<MainScreen> {
                         builder: (context) => CalendarScreen(plans: plans),
                       ),
                     );
-                  } // 아이콘 버튼을 눌렀을 때의 동작
+                  }
                 },
               ),
               IconButton(
                 icon: const Icon(Icons.group, size: 40),
                 onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ChatScreen(),
+                    ),
+                  );
                   // 아이콘 버튼을 눌렀을 때의 동작
                 },
               ),
@@ -168,7 +189,6 @@ class _MainScreenState extends State<MainScreen> {
                       builder: (context) => const LogoutScreen(),
                     ),
                   );
-                  // 아이콘 버튼을 눌렀을 때의 동작
                 },
               ),
             ],
