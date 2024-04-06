@@ -71,6 +71,11 @@ flutter:
     - assets/images/image_106.png
     - assets/images/image_103.png
     - assets/images/shop_logo.png
+    - assets/character/
+    - assets/background/
+    - assets/item/
+    - assets/red.jpg
+    - assets/coming_soon.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -79,6 +84,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -103,6 +109,26 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
+      - family: Pretendard
+        fonts:
+          - asset: assets/fonts/Pretendard-Thin.ttf
+            weight: 100
+          - asset: assets/fonts/Pretendard-ExtraLight.ttf
+            weight: 200
+          - asset: assets/fonts/Pretendard-Light.ttf
+            weight: 300
+          - asset: assets/fonts/Pretendard-Regular.ttf
+            weight: 400
+          - asset: assets/fonts/Pretendard-Medium.ttf
+            weight: 500
+          - asset: assets/fonts/Pretendard-SemiBold.ttf
+            weight: 600
+          - asset: assets/fonts/Pretendard-Bold.ttf
+            weight: 700
+          - asset: assets/fonts/Pretendard-ExtraBold.ttf
+            weight: 800
+          - asset: assets/fonts/Pretendard-Black.ttf
+            weight: 900
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
