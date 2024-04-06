@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'character_change.dart';
 import 'background_change.dart';
-import '../main_screen.dart';
+import 'package:untitled1/main/main_screen.dart';
 
 class MainCharacterScreen extends StatelessWidget {
   final String? characterImage;
