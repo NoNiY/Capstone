@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:untitled1/shop_screen.dart';
 import 'package:untitled1/Plan/calendar_screen.dart';
 import 'package:untitled1/Plan/_plan.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 import 'package:untitled1/main/log_out.dart';
 import 'package:untitled1/chat/chat_room.dart';
-import 'package:untitled1/shop_screen.dart';
+import 'package:untitled1/character/main_character.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  const MainScreen({super.key, this.characterImage, this.backgroundImage});
+
+  final String? characterImage;
+  final String? backgroundImage;
 
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 class _MainScreenState extends State<MainScreen> {
+  late String _currentCharacterImage;
+  late String _currentBackgroundImage;
   final _authentication = FirebaseAuth.instance;
   User? loggedUser;
 
@@ -23,6 +28,8 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     getCurrentUser();
+    _currentCharacterImage = widget.characterImage ?? 'assets/character/character1.png';
+    _currentBackgroundImage = widget.backgroundImage ?? 'assets/background/background1.jpg';
   }
 
   void getCurrentUser() {
@@ -35,6 +42,16 @@ class _MainScreenState extends State<MainScreen> {
     } catch (e) {
       debugPrint(e as String?);
     }
+  }
+
+  Future<List<Plan>> getPlansFromFirestore() async {
+    final userEmail = loggedUser?.email;
+    if (userEmail != null) {
+      final querySnapshot =
+          await FirebaseFirestore.instance.collection(userEmail).get();
+      return querySnapshot.docs.map((doc) => Plan.fromJson(doc.data())).toList();
+    }
+    return [];
   }
 
   @override
@@ -54,15 +71,14 @@ class _MainScreenState extends State<MainScreen> {
             IconButton(
               icon: const Icon(Icons.shopping_cart, size: 40),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return ShopScreen();
-                    },
-                  ),
-                );
-                // 오른쪽 아이콘을 눌렀을 때의 동작
+                if (context.mounted){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ShopScreen()
+                    )
+                  );
+                }
               },
             ),
           ],
@@ -71,13 +87,12 @@ class _MainScreenState extends State<MainScreen> {
           child: Center(
             child: Column(
               children: <Widget>[
-                // 바탕화면 사진과 캐릭터 디자인
                 Container(
                   width: 390,
                   height: 590,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/123.jpg'),
+                      image: AssetImage(_currentBackgroundImage),
                       fit: BoxFit.fill, // 이미지가 부모 컨테이너에 꽉 차도록 설정
                     ),
                   ),
@@ -85,7 +100,7 @@ class _MainScreenState extends State<MainScreen> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Center(
-                        child: Image.asset('assets/images/111.png'),
+                        child: Image.asset(_currentCharacterImage),
                       ),
                       const Text(
                         '10',
@@ -135,11 +150,7 @@ class _MainScreenState extends State<MainScreen> {
                   size: 40,
                 ),
                 onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  final jsonPlans = prefs.getStringList('plans') ?? [];
-                  final plans = jsonPlans
-                      .map((jsonPlan) => Plan.fromJson(jsonDecode(jsonPlan)))
-                      .toList();
+                  final plans = await getPlansFromFirestore();
                   if (context.mounted) {
                     Navigator.push(
                       context,
@@ -147,7 +158,7 @@ class _MainScreenState extends State<MainScreen> {
                         builder: (context) => CalendarScreen(plans: plans),
                       ),
                     );
-                  } // 아이콘 버튼을 눌렀을 때의 동작
+                  }
                 },
               ),
               IconButton(
@@ -171,7 +182,19 @@ class _MainScreenState extends State<MainScreen> {
               IconButton(
                 icon: const Icon(Icons.person_outline, size: 40),
                 onPressed: () {
-
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        // main_screen에서 main_character로 이동할 때 이미지 전달
+                        return MainCharacterScreen(
+                          characterImage: _currentCharacterImage,
+                          backgroundImage: _currentBackgroundImage,
+                        );
+                      },
+                    ),
+                  );
+                  // 아이콘 버튼을 눌렀을 때의 동작
                 },
               ),
               IconButton(
@@ -183,7 +206,6 @@ class _MainScreenState extends State<MainScreen> {
                       builder: (context) => const LogoutScreen(),
                     ),
                   );
-                  // 아이콘 버튼을 눌렀을 때의 동작
                 },
               ),
             ],
@@ -193,5 +215,3 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 }
-
-class Textstyle {}

@@ -10,7 +10,6 @@ class Messages extends StatelessWidget {
   Widget build(BuildContext context) {
     final userInfo = UserInfo();
     String userEmail = userInfo.userEmail ?? '';
-    String userName = userEmail.split('@')[0];
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('chatting')

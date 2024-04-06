@@ -33,7 +33,11 @@ dependencies:
   table_calendar: ^3.1.0
   intl: ^0.19.0
   shared_preferences: ^2.2.2
+<<<<<<< HEAD
   firebase_storage: ^11.7.0
+=======
+  firebase_storage: ^11.6.11
+>>>>>>> 4189b862900f284bd14471beb0abd7c321219fb4
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -71,6 +75,13 @@ flutter:
     - assets/images/image_106.png
     - assets/images/image_103.png
     - assets/images/shop_logo.png
+<<<<<<< HEAD
+=======
+    - assets/character/
+    - assets/background/
+    - assets/red.jpg
+    - assets/coming_soon.png
+>>>>>>> 4189b862900f284bd14471beb0abd7c321219fb4
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -79,6 +90,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -103,6 +115,7 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
+
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
