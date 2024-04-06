@@ -21,13 +21,12 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
 
-  @override
   Future<String> _dday() async {
     // 여기에 종료 날짜의 D-day를 계산하는 코드를 작성합니다.
     // 이 메서드는 비동기로 종료 날짜의 D-day를 계산하고 계산된 D-day를 반환합니다.
     // 위의 예시 코드를 참고하여 종료 날짜의 D-day를 계산하고 문자열로 반환합니다.
     final userInfo = UserInfo();
-    DateTime userEnd = userInfo.endDate ?? DateTime.now();
+    DateTime userEnd = userInfo.endDate;
     DateTime currentDate = DateTime.now();
     int dDayToEnd = userEnd.difference(currentDate).inDays;
     return dDayToEnd >= 0 ? 'D-$dDayToEnd' : 'D+${-dDayToEnd}';
@@ -47,15 +46,13 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
         ],
         ),
-        body: Container(
-          child: const Column(
-            children: [
-              Expanded(
-                child: Messages(),
-              ),
-              NewMessage(),
-            ],
-          ),
+        body: const Column(
+          children: [
+            Expanded(
+              child: Messages(),
+            ),
+            NewMessage(),
+          ],
         ),
       ),
     );

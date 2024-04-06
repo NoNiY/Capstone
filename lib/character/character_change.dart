@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'main_character.dart'; // MainCharacterScreen으로 이동할 수 있도록 import 추가
 
 class ChangeCharacterScreen extends StatelessWidget {
+  const ChangeCharacterScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -9,7 +11,7 @@ class ChangeCharacterScreen extends StatelessWidget {
         elevation: 4,
         backgroundColor: Colors.blueGrey,
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.person_add_alt,
             size: 40,
           ),
@@ -19,7 +21,7 @@ class ChangeCharacterScreen extends StatelessWidget {
         ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.shopping_cart,
               size: 40,
             ),
@@ -40,7 +42,7 @@ class ChangeCharacterScreen extends StatelessWidget {
             top: MediaQuery.of(context).size.height * 0.05,
             left: 0,
             right: 0,
-            child: Center(
+            child: const Center(
               child: Text(
                 '캐릭터 변경',
                 style: TextStyle(
@@ -51,10 +53,10 @@ class ChangeCharacterScreen extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
+          const Expanded(
             child: AllCharacterStatus(),
           ),
-          GoToMainCharacterStatus(),
+          const GoToMainCharacterStatus(),
         ],
       ),
     );
@@ -62,6 +64,8 @@ class ChangeCharacterScreen extends StatelessWidget {
 }
 
 class AllCharacterStatus extends StatelessWidget {
+  const AllCharacterStatus({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -74,17 +78,17 @@ class AllCharacterStatus extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(height: 40),
+                    const SizedBox(height: 40),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => MainCharacterScreen(characterImage: 'assets/character/character1.png'), // MainCharacterScreen으로 characterImage 전달
+                            builder: (context) => const MainCharacterScreen(characterImage: 'assets/character/character1.png'), // MainCharacterScreen으로 characterImage 전달
                           ),
                         );
                       },
-                      child: CharacterImage(
+                      child: const CharacterImage(
                         imagePath: 'assets/character/character1.png',
                         height: 350,
                         width: 350,
@@ -97,17 +101,17 @@ class AllCharacterStatus extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(height: 150),
+                    const SizedBox(height: 150),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => MainCharacterScreen(characterImage: 'assets/character/character2.png'), // MainCharacterScreen으로 characterImage 전달
+                            builder: (context) => const MainCharacterScreen(characterImage: 'assets/character/character2.png'), // MainCharacterScreen으로 characterImage 전달
                           ),
                         );
                       },
-                      child: CharacterImage(
+                      child: const CharacterImage(
                         imagePath: 'assets/character/character2.png',
                         height: 150,
                         width: 150,
@@ -127,17 +131,17 @@ class AllCharacterStatus extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => MainCharacterScreen(characterImage: 'assets/character/character3.png'), // MainCharacterScreen으로 characterImage 전달
+                            builder: (context) => const MainCharacterScreen(characterImage: 'assets/character/character3.png'), // MainCharacterScreen으로 characterImage 전달
                           ),
                         );
                       },
-                      child: CharacterImage(
+                      child: const CharacterImage(
                         imagePath: 'assets/character/character3.png',
                         height: 150,
                         width: 150,
@@ -155,11 +159,11 @@ class AllCharacterStatus extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => MainCharacterScreen(characterImage: 'assets/coming_soon.png'), // MainCharacterScreen으로 characterImage 전달
+                            builder: (context) => const MainCharacterScreen(characterImage: 'assets/coming_soon.png'), // MainCharacterScreen으로 characterImage 전달
                           ),
                         );
                       },
-                      child: CharacterImage(
+                      child: const CharacterImage(
                         imagePath: 'assets/coming_soon.png',
                         height: 230,
                         width: 100,
@@ -185,7 +189,7 @@ class CharacterImage extends StatelessWidget {
   final double? top;
   final double? bottom;
 
-  const CharacterImage({
+  const CharacterImage({super.key, 
     required this.imagePath,
     this.height = 80,
     this.width = 80,
@@ -212,13 +216,15 @@ class CharacterImage extends StatelessWidget {
 }
 
 class GoToMainCharacterStatus extends StatelessWidget {
+  const GoToMainCharacterStatus({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Positioned(
       bottom: 16,
       right: 16,
       child: IconButton(
-        icon: Icon(
+        icon: const Icon(
           Icons.arrow_back,
           size: 50,
           color: Colors.greenAccent,

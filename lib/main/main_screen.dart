@@ -9,7 +9,7 @@ import 'package:untitled1/chat/chat_room.dart';
 import 'package:untitled1/character/main_character.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key, this.characterImage, this.backgroundImage}) : super(key: key);
+  const MainScreen({super.key, this.characterImage, this.backgroundImage});
 
   final String? characterImage;
   final String? backgroundImage;

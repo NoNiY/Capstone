@@ -7,7 +7,7 @@ class MainCharacterScreen extends StatelessWidget {
   final String? characterImage;
   final String? backgroundImage;
 
-  const MainCharacterScreen({Key? key, this.characterImage, this.backgroundImage}) : super(key: key);
+  const MainCharacterScreen({super.key, this.characterImage, this.backgroundImage});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class MainCharacterScreen extends StatelessWidget {
         elevation: 4,
         backgroundColor: Colors.blueGrey,
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.person_add_alt,
             size: 40,
           ),
@@ -26,7 +26,7 @@ class MainCharacterScreen extends StatelessWidget {
         ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.shopping_cart,
               size: 40,
             ),
@@ -52,7 +52,7 @@ class MainCharacterScreen extends StatelessWidget {
               width: 350,
             ),
           ),
-          Positioned(
+          const Positioned(
             left: 55,
             bottom: 270,
             child: CharacterStatus(),
@@ -72,10 +72,12 @@ class MainCharacterScreen extends StatelessWidget {
 }
 
 class CharacterStatus extends StatelessWidget {
+  const CharacterStatus({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(10),
@@ -88,7 +90,7 @@ class OtherCharacterStatus extends StatelessWidget {
   final String? characterImage;
   final String? backgroundImage;
 
-  OtherCharacterStatus({this.characterImage, this.backgroundImage});
+  const OtherCharacterStatus({super.key, this.characterImage, this.backgroundImage});
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +98,7 @@ class OtherCharacterStatus extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         GestureDetector(
@@ -104,7 +106,7 @@ class OtherCharacterStatus extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ChangeCharacterScreen(),
+                builder: (context) => const ChangeCharacterScreen(),
               ),
             ).then((value) {
               if (value != null) {
@@ -115,7 +117,7 @@ class OtherCharacterStatus extends StatelessWidget {
               }
             });
           },
-          child: Text(
+          child: const Text(
             '캐릭터 변경',
             style: TextStyle(
               fontFamily: "Pretendard",
@@ -124,7 +126,7 @@ class OtherCharacterStatus extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 130,
         ),
         GestureDetector(
@@ -132,7 +134,7 @@ class OtherCharacterStatus extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ChangeBackgroundScreen(),
+                builder: (context) => const ChangeBackgroundScreen(),
               ),
             ).then((value) {
               if (value != null) {
@@ -143,7 +145,7 @@ class OtherCharacterStatus extends StatelessWidget {
               }
             });
           },
-          child: Text(
+          child: const Text(
             '테마 변경',
             style: TextStyle(
               fontFamily: "Pretendard",
@@ -152,10 +154,10 @@ class OtherCharacterStatus extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 130,
         ),
-        Text(
+        const Text(
           '악세사리 변경',
           style: TextStyle(
             fontFamily: "Pretendard",
@@ -163,11 +165,11 @@ class OtherCharacterStatus extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 140,
         ),
         IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back,
             size: 50,
             color: Colors.greenAccent,
