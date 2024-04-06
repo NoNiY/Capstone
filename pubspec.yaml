@@ -108,6 +108,7 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
+  fonts:
       - family: Pretendard
         fonts:
           - asset: assets/fonts/Pretendard-Thin.ttf
