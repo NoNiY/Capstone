@@ -2,20 +2,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:untitled1/Plan/calendar_screen.dart';
 import 'package:untitled1/character/main_character.dart';
-import 'package:untitled1/chat/TeamPlan_Screen.dart';
+import 'package:untitled1/chat/team_plan_screen.dart';
 import 'package:untitled1/main/log_out.dart';
 import 'package:untitled1/main/main_screen.dart';
 import 'package:untitled1/shop_screen.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 2;
 
-  final List<Widget> _pages = [CalendarScreen(plans: [],),TeamPlanScreen(), MainScreen(), MainCharacterScreen(), LogoutScreen()];
+  final List<Widget> _pages = [const CalendarScreen(plans: [],),const TeamPlanScreen(), const MainScreen(), const MainCharacterScreen(), const LogoutScreen()];
   //아래 위젯 화면 종류
   void _onItemTapped(int index) {
     setState(() {
@@ -79,7 +81,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
         currentIndex: _currentIndex,
-        selectedItemColor: Color.fromARGB(255, 197, 142, 233),
+        selectedItemColor: const Color.fromARGB(255, 197, 142, 233),
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
       ),
