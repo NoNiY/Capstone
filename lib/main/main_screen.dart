@@ -48,7 +48,7 @@ class _MainScreenState extends State<MainScreen> {
     final userEmail = loggedUser?.email;
     if (userEmail != null) {
       final querySnapshot =
-          await FirebaseFirestore.instance.collection(userEmail).get();
+      await FirebaseFirestore.instance.collection(userEmail).get();
       return querySnapshot.docs.map((doc) => Plan.fromJson(doc.data())).toList();
     }
     return [];
@@ -105,7 +105,7 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                       const Text(
                         '10',
-                        style: TextStyle(fontSize: 40, color: Colors.white),
+                        style: TextStyle(fontSize: 40, color: Colors.black),
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -125,8 +125,8 @@ class _MainScreenState extends State<MainScreen> {
                                   value: 0.6, // 경험치의 비율을 나타내는 값 (0 ~ 1)
                                   backgroundColor: Colors.grey[500],
                                   valueColor:
-                                      const AlwaysStoppedAnimation<Color>(
-                                          Colors.blue),
+                                  const AlwaysStoppedAnimation<Color>(
+                                      Colors.blue),
                                 ),
                               ),
                             ),
@@ -141,7 +141,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ),
         // 하단바
-              /*
+        /*
         bottomNavigationBar: BottomAppBar(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

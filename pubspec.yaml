@@ -63,6 +63,12 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
+    - assets/background/background1.jpg
+    - assets/background/background2.jpg
+    - assets/background/background3.jpg
+    - assets/character/character1.png
+    - assets/character/character2.png
+    - assets/character/character3.png
     - assets/images/123.jpg
     - assets/images/111.png
     - assets/images/red.jpg
@@ -73,7 +79,6 @@ flutter:
     - assets/images/shop_logo.png
     - assets/character/
     - assets/background/
-    - assets/item/
     - assets/red.jpg
     - assets/coming_soon.png
   # The following line ensures that the Material Icons font is

@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:untitled1/Plan/calendar_screen.dart';
+import 'package:untitled1/character/main_character.dart';
 import 'package:untitled1/chat/TeamPlan_Screen.dart';
+import 'package:untitled1/main/log_out.dart';
 import 'package:untitled1/main/main_screen.dart';
-import 'package:untitled1/blank_screen.dart';
-import 'package:untitled1/Plan/_plan.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -15,7 +15,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 2;
 
-  final List<Widget> _pages = [CalendarScreen(plans: [],),TeamPlanScreen(), MainScreen(), BlankScreen(), BlankScreen()];
+  final List<Widget> _pages = [CalendarScreen(plans: [],),TeamPlanScreen(), MainScreen(), MainCharacterScreen(), LogoutScreen()];
   //아래 위젯 화면 종류
   void _onItemTapped(int index) {
     setState(() {
