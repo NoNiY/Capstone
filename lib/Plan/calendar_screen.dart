@@ -176,8 +176,11 @@ Future<void> _deletePlan() async {
           const SizedBox(height: 16),
         ],
       ),
+      /*
       bottomNavigationBar: _buildBottomAppBar(),
       appBar: _buildAppBar(),
+      */
+
     );
   }
 
@@ -438,7 +441,7 @@ Future<void> _deletePlan() async {
       ],
     );
   }
-
+/*
   Widget _buildBottomAppBar() {
     return BottomAppBar(
       child: Row(
@@ -519,7 +522,7 @@ Future<void> _deletePlan() async {
       ],
     );
   }
-
+*/
   void _showMonthPicker() {
     final currentYear = DateTime.now().year;
 
