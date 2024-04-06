@@ -48,7 +48,7 @@ class _ChatScreenState extends State<ChatScreen> {
         ],
         ),
         body: Container(
-          child: Column(
+          child: const Column(
             children: [
               Expanded(
                 child: Messages(),
@@ -67,7 +67,7 @@ class _ChatScreenState extends State<ChatScreen> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // 데이터 로딩 중인 경우 로딩 텍스트를 반환합니다.
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
           // 에러 발생 시 에러 메시지를 반환합니다.
           return Text('Error: ${snapshot.error}');
@@ -76,7 +76,7 @@ class _ChatScreenState extends State<ChatScreen> {
           // 이 결과는 FutureBuilder의 future가 완료된 후에 비로소 사용 가능합니다.
           return Text(
             '${snapshot.data}',
-            style: TextStyle(fontSize: 30),
+            style: const TextStyle(fontSize: 30),
           );
         }
       },

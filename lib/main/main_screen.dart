@@ -6,21 +6,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:untitled1/main/log_out.dart';
 import 'package:untitled1/chat/chat_room.dart';
-import 'package:untitled1/character/main_character.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key, this.characterImage});
+  const MainScreen({super.key, required String characterImage});
 
-  final String? characterImage;
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
-class MainScreen2 extends StatefulWidget{
-  const MainScreen2({super.key, this.backgroundImage});
-  final String? backgroundImage;
-  @override
-  _MainScreenState createState() => _MainScreenState();
-}
+
 class _MainScreenState extends State<MainScreen> {
   final _authentication = FirebaseAuth.instance;
   User? loggedUser;
@@ -169,14 +162,6 @@ class _MainScreenState extends State<MainScreen> {
               IconButton(
                 icon: const Icon(Icons.person_outline, size: 40),
                 onPressed: () {
-                  Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                  builder: (context) {
-                  return MainCharacterScreen();
-                  },
-                  ),
-                  );
                   // 아이콘 버튼을 눌렀을 때의 동작
                 },
               ),
@@ -199,3 +184,5 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 }
+
+class Textstyle {}

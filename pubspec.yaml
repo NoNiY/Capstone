@@ -11,7 +11,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # build by specifying --build-name and --build-number, respectively.
 # In Android, build-name is used as versionName while build-number used as versionCode.
 # Read more about Android versioning at https://developer.android.com/studio/publish/versioning
-# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is useda as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
@@ -33,6 +33,7 @@ dependencies:
   table_calendar: ^3.1.0
   intl: ^0.19.0
   shared_preferences: ^2.2.2
+  firebase_storage: ^11.7.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -62,10 +63,14 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-    - assets/fonts/
-    - assets/character/character1.png
-    - assets/background/background1.jpg
-    - assets/images/
+    - assets/images/123.jpg
+    - assets/images/111.png
+    - assets/images/red.jpg
+    - assets/images/back_icon.png
+    - assets/images/image_69.png
+    - assets/images/image_106.png
+    - assets/images/image_103.png
+    - assets/images/shop_logo.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
