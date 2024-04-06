@@ -8,12 +8,19 @@ import 'package:untitled1/main/log_out.dart';
 import 'package:untitled1/chat/chat_room.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key, required String characterImage});
+  const MainScreen({Key? key, this.characterImage}) : super(key: key);
+
+  final String? characterImage;
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
-
+class MainScreen2 extends StatefulWidget{
+  const MainScreen2({Key? key, this.backgroundImage}) : super(key: key);
+  final String? backgroundImage;
+  @override
+  _MainScreenState createState() => _MainScreenState();
+}
 class _MainScreenState extends State<MainScreen> {
   final _authentication = FirebaseAuth.instance;
   User? loggedUser;
