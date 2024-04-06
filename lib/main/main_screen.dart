@@ -40,7 +40,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
+        /*appBar: AppBar(
           elevation: 4,
           backgroundColor: Colors.blueGrey,
           leading: IconButton(
@@ -58,6 +58,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ],
         ),
+        */
         body: Expanded(
           child: Center(
             child: Column(
@@ -116,6 +117,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ),
         // 하단바
+              /*
         bottomNavigationBar: BottomAppBar(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -180,6 +182,7 @@ class _MainScreenState extends State<MainScreen> {
             ],
           ),
         ),
+    */
       ),
     );
   }
