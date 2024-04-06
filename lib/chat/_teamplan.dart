@@ -9,7 +9,7 @@ class Plan {
   final List<String> participants;
 
   Plan({
-    required this.id,
+    this.id = '',
     required this.userId,
     required this.name,
     required this.startDate,

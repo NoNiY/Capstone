@@ -8,9 +8,9 @@ import 'package:untitled1/chat/_teamplan.dart';
 class TeamPlanScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: '팀 계획',
-      home: TeamPlanListScreen(),
+    return Scaffold(
+
+      body: TeamPlanListScreen(),
     );
   }
 }
@@ -44,7 +44,9 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
           .get();
 
       List<Plan> fetchedPlans = querySnapshot.docs.map((doc) {
-        return Plan.fromJson(doc.data() as Map<String, dynamic>);
+        final planData = doc.data() as Map<String, dynamic>;
+        planData['id'] = doc.id; // 문서의 ID를 'id' 필드에 할당
+        return Plan.fromJson(planData);
       }).toList();
 
       setState(() {
@@ -173,7 +175,6 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
       startDate: startDate,
       endDate: endDate,
       participants: _participants,
-      id: '',
     );
 
     try {
@@ -183,10 +184,10 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
       updatedPlan = updatedPlan.copyWith(id: planId); // Plan 객체에 가져온 id를 설정
       setState(() {
         _plans.add(updatedPlan);
-        _startDate = null;
-        _endDate = null;
-        _participants = [];
-        _descriptionController.clear();
+        _startDate = null; // 추가 후 초기화
+        _endDate = null; // 추가 후 초기화
+        _participants = []; // 추가 후 초기화
+        _descriptionController.clear(); // 추가 후 초기화
       });
       // 데이터 추가가 성공적으로 이루어졌으므로 다이얼로그를 닫습니다.
       Navigator.of(context).pop();
@@ -197,11 +198,14 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('팀 계획 목록'),
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
