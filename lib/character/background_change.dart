@@ -189,7 +189,7 @@ class BackgroundImage extends StatelessWidget {
   final double? top;
   final double? bottom;
 
-  const BackgroundImage({super.key, 
+  const BackgroundImage({super.key,
     required this.imagePath,
     this.height = 80,
     this.width = 80,

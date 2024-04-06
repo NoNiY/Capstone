@@ -189,7 +189,7 @@ class CharacterImage extends StatelessWidget {
   final double? top;
   final double? bottom;
 
-  const CharacterImage({super.key, 
+  const CharacterImage({super.key,
     required this.imagePath,
     this.height = 80,
     this.width = 80,
