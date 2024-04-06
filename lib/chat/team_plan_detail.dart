@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:untitled1/chat/team_plan_screen.dart';
+import 'package:untitled1/chat/_teamplan.dart';
 import 'package:untitled1/chat/chat_room.dart';
 
 class PlanDetailsScreen extends StatelessWidget {
-  final Map<String, dynamic> plan;
+  final Plan plan;
   final int index;
 
   const PlanDetailsScreen({super.key, required this.plan, required this.index});
@@ -21,22 +22,22 @@ class PlanDetailsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              '계획 내용: ${plan['description']}',
+              '계획 내용: ${plan.name}',
               style: const TextStyle(fontSize: 20),
             ),
             const SizedBox(height: 10),
             Text(
-              '시작일: ${DateFormat('yyyy-MM-dd').format(plan['startDate'])}',
+              '시작일: ${DateFormat('yyyy-MM-dd').format(plan.startDate)}',
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 10),
             Text(
-              '종료일: ${DateFormat('yyyy-MM-dd').format(plan['endDate'])}',
+              '종료일: ${DateFormat('yyyy-MM-dd').format(plan.endDate)}',
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 10),
             Text(
-              '참여자: ${plan['participants'].join(', ')}',
+              '참여자: ${plan.participants.join(', ')}',
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 20),

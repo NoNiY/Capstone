@@ -447,7 +447,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) {
-                                  return HomePage();
+                                  return const HomePage();
                                 },
                               ),
                             );}
@@ -479,7 +479,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) {
-                                  return HomePage();
+                                  return const HomePage();
                                 },
                               ),
                             );}
