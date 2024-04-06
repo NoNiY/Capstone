@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:untitled1/blank_screen.dart';
-import 'package:untitled1/main/main_screen.dart';
 import 'package:untitled1/Plan/plan_list_screen.dart';
 import 'package:untitled1/Plan/plan_screen.dart';
 import 'package:intl/intl.dart';
@@ -9,7 +7,6 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:untitled1/Plan/_plan.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:untitled1/user_info.dart';
 
@@ -31,7 +28,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
   List<Plan> _plans = [];
   Plan? _selectedPlan;
   Timer? _debounce;
-  final firestoreInstance = FirebaseFirestore.instance;
 
   @override
   void initState() {
@@ -638,15 +634,4 @@ Future<void> _deletePlan() async {
     });
   }
 
-  Widget? _buildFloatingActionButton() {
-    if (_selectedDay != null) {
-      return FloatingActionButton(
-        onPressed: () {
-          _showPlanScreen(null, initialDate: _selectedDay!);
-        },
-        child: const Icon(Icons.add),
-      );
-    }
-    return null;
-  }
 }
