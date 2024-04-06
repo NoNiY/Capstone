@@ -5,8 +5,7 @@ import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_8.dart';
 
 class ChatBubbles extends StatelessWidget {
   const ChatBubbles(this.message, this.isMe, this.userName,
-      {Key? key})
-      : super(key: key);
+      {super.key});
 
   final String message;
   final String userName;
@@ -25,7 +24,7 @@ class ChatBubbles extends StatelessWidget {
               child: ChatBubble(
                 clipper: ChatBubbleClipper8(type: BubbleType.sendBubble),
                 alignment: Alignment.topRight,
-                margin: EdgeInsets.only(top: 20),
+                margin: const EdgeInsets.only(top: 20),
                 backGroundColor: Colors.blue,
                 child: Container(
                   constraints: BoxConstraints(
@@ -38,12 +37,12 @@ class ChatBubbles extends StatelessWidget {
                     children: [
                       Text(
                         userName,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                       Text(
                         message,
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ],
                   ),
@@ -55,8 +54,8 @@ class ChatBubbles extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(45, 10, 0, 0),
               child: ChatBubble(
                 clipper: ChatBubbleClipper8(type: BubbleType.receiverBubble),
-                backGroundColor: Color(0xffE7E7ED),
-                margin: EdgeInsets.only(top: 20),
+                backGroundColor: const Color(0xffE7E7ED),
+                margin: const EdgeInsets.only(top: 20),
                 child: Container(
                   constraints: BoxConstraints(
                     maxWidth: MediaQuery.of(context).size.width * 0.7,
@@ -68,14 +67,14 @@ class ChatBubbles extends StatelessWidget {
                     children: [
                       Text(
                         userName,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
                       Text(
                         message,
-                        style: TextStyle(color: Colors.black),
+                        style: const TextStyle(color: Colors.black),
                       ),
                     ],
                   ),
@@ -88,7 +87,7 @@ class ChatBubbles extends StatelessWidget {
         top: 0,
         right: isMe ? 5 : null,
         left: isMe ? null : 5,
-        child: CircleAvatar(
+        child: const CircleAvatar(
           backgroundColor: Colors.black,
         ),
       ),
