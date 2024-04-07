@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'character_change.dart';
-import 'background_change.dart';
+import 'package:untitled1/character/character_change.dart';
+import 'package:untitled1/character/background_change.dart';
+import 'package:untitled1/main/home_screen.dart';
 import 'package:untitled1/main/main_screen.dart';
 
 class MainCharacterScreen extends StatelessWidget {
@@ -12,30 +13,6 @@ class MainCharacterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 4,
-        backgroundColor: Colors.blueGrey,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.person_add_alt,
-            size: 40,
-          ),
-          onPressed: () {
-            // 왼쪽 아이콘을 눌렀을 때의 동작
-          },
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.shopping_cart,
-              size: 40,
-            ),
-            onPressed: () {
-              // 오른쪽 아이콘을 눌렀을 때의 동작
-            },
-          ),
-        ],
-      ),
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -45,7 +22,7 @@ class MainCharacterScreen extends StatelessWidget {
           ),
           Positioned(
             left: -65,
-            bottom: 250,
+            bottom: 200,
             child: Image.asset(
               characterImage ?? 'assets/character/character1.png',
               height: 350,
@@ -54,7 +31,7 @@ class MainCharacterScreen extends StatelessWidget {
           ),
           const Positioned(
             left: 55,
-            bottom: 270,
+            bottom: 200,
             child: CharacterStatus(),
           ),
           Positioned(
@@ -127,7 +104,7 @@ class OtherCharacterStatus extends StatelessWidget {
           ),
         ),
         const SizedBox(
-          height: 130,
+          height: 100,
         ),
         GestureDetector(
           onTap: () {
@@ -155,7 +132,7 @@ class OtherCharacterStatus extends StatelessWidget {
           ),
         ),
         const SizedBox(
-          height: 130,
+          height: 100,
         ),
         const Text(
           '악세사리 변경',
@@ -166,7 +143,7 @@ class OtherCharacterStatus extends StatelessWidget {
           ),
         ),
         const SizedBox(
-          height: 140,
+          height: 100,
         ),
         IconButton(
           icon: const Icon(

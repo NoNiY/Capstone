@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'main_character.dart'; // MainCharacterScreen으로 이동할 수 있도록 import 추가
+import 'package:untitled1/character/main_character.dart'; // MainCharacterScreen으로 이동할 수 있도록 import 추가
 
 class ChangeCharacterScreen extends StatelessWidget {
   const ChangeCharacterScreen({super.key});
@@ -189,7 +189,7 @@ class CharacterImage extends StatelessWidget {
   final double? top;
   final double? bottom;
 
-  const CharacterImage({super.key, 
+  const CharacterImage({super.key,
     required this.imagePath,
     this.height = 80,
     this.width = 80,

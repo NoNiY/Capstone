@@ -46,6 +46,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
         ],
         ),
+
         body: const Column(
           children: [
             Expanded(

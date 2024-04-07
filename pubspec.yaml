@@ -11,7 +11,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # build by specifying --build-name and --build-number, respectively.
 # In Android, build-name is used as versionName while build-number used as versionCode.
 # Read more about Android versioning at https://developer.android.com/studio/publish/versioning
-# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is useda as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
@@ -33,7 +33,7 @@ dependencies:
   table_calendar: ^3.1.0
   intl: ^0.19.0
   shared_preferences: ^2.2.2
-  firebase_storage: ^11.6.11
+  firebase_storage: ^11.7.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -63,6 +63,12 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
+    - assets/background/background1.jpg
+    - assets/background/background2.jpg
+    - assets/background/background3.jpg
+    - assets/character/character1.png
+    - assets/character/character2.png
+    - assets/character/character3.png
     - assets/images/123.jpg
     - assets/images/111.png
     - assets/images/red.jpg
@@ -83,7 +89,6 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
-
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -108,7 +113,27 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
-
+  fonts:
+      - family: Pretendard
+        fonts:
+          - asset: assets/fonts/Pretendard-Thin.ttf
+            weight: 100
+          - asset: assets/fonts/Pretendard-ExtraLight.ttf
+            weight: 200
+          - asset: assets/fonts/Pretendard-Light.ttf
+            weight: 300
+          - asset: assets/fonts/Pretendard-Regular.ttf
+            weight: 400
+          - asset: assets/fonts/Pretendard-Medium.ttf
+            weight: 500
+          - asset: assets/fonts/Pretendard-SemiBold.ttf
+            weight: 600
+          - asset: assets/fonts/Pretendard-Bold.ttf
+            weight: 700
+          - asset: assets/fonts/Pretendard-ExtraBold.ttf
+            weight: 800
+          - asset: assets/fonts/Pretendard-Black.ttf
+            weight: 900
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

@@ -14,10 +14,10 @@ class MainScreen extends StatefulWidget {
   final String? characterImage;
   final String? backgroundImage;
 
+
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
-
 class _MainScreenState extends State<MainScreen> {
   late String _currentCharacterImage;
   late String _currentBackgroundImage;
@@ -48,7 +48,7 @@ class _MainScreenState extends State<MainScreen> {
     final userEmail = loggedUser?.email;
     if (userEmail != null) {
       final querySnapshot =
-          await FirebaseFirestore.instance.collection(userEmail).get();
+      await FirebaseFirestore.instance.collection(userEmail).get();
       return querySnapshot.docs.map((doc) => Plan.fromJson(doc.data())).toList();
     }
     return [];
@@ -58,31 +58,6 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          elevation: 4,
-          backgroundColor: Colors.blueGrey,
-          leading: IconButton(
-            icon: const Icon(Icons.person_add_alt, size: 40),
-            onPressed: () {
-              // 왼쪽 아이콘을 눌렀을 때의 동작
-            },
-          ),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.shopping_cart, size: 40),
-              onPressed: () {
-                if (context.mounted){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ShopScreen()
-                    )
-                  );
-                }
-              },
-            ),
-          ],
-        ),
         body: Expanded(
           child: Center(
             child: Column(
@@ -104,7 +79,7 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                       const Text(
                         '10',
-                        style: TextStyle(fontSize: 40, color: Colors.white),
+                        style: TextStyle(fontSize: 40, color: Colors.black),
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -124,8 +99,8 @@ class _MainScreenState extends State<MainScreen> {
                                   value: 0.6, // 경험치의 비율을 나타내는 값 (0 ~ 1)
                                   backgroundColor: Colors.grey[500],
                                   valueColor:
-                                      const AlwaysStoppedAnimation<Color>(
-                                          Colors.blue),
+                                  const AlwaysStoppedAnimation<Color>(
+                                      Colors.blue),
                                 ),
                               ),
                             ),
@@ -137,78 +112,6 @@ class _MainScreenState extends State<MainScreen> {
                 ),
               ],
             ),
-          ),
-        ),
-        // 하단바
-        bottomNavigationBar: BottomAppBar(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              IconButton(
-                icon: const Icon(
-                  Icons.description,
-                  size: 40,
-                ),
-                onPressed: () async {
-                  final plans = await getPlansFromFirestore();
-                  if (context.mounted) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CalendarScreen(plans: plans),
-                      ),
-                    );
-                  }
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.group, size: 40),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ChatScreen(),
-                    ),
-                  );
-                  // 아이콘 버튼을 눌렀을 때의 동작
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.home, size: 40),
-                onPressed: () {
-                  // 아이콘 버튼을 눌렀을 때의 동작
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.person_outline, size: 40),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        // main_screen에서 main_character로 이동할 때 이미지 전달
-                        return MainCharacterScreen(
-                          characterImage: _currentCharacterImage,
-                          backgroundImage: _currentBackgroundImage,
-                        );
-                      },
-                    ),
-                  );
-                  // 아이콘 버튼을 눌렀을 때의 동작
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.settings, size: 40),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LogoutScreen(),
-                    ),
-                  );
-                },
-              ),
-            ],
           ),
         ),
       ),
