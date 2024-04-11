@@ -84,4 +84,3 @@ class PlanDetailsScreen extends StatelessWidget {
     );
   }
 }
-
