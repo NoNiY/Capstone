@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:untitled1/blank_screen.dart';
+import 'package:untitled1/main/home_screen.dart';
 import 'package:untitled1/main/main_screen.dart';
 import 'package:untitled1/Plan/plan_list_screen.dart';
 import 'package:untitled1/Plan/plan_screen.dart';
@@ -76,28 +77,28 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-Future<void> _deletePlan() async {
-  if (_selectedPlan != null) {
-    String planId = _selectedPlan!.id;
-    setState(() {
-      _plans.removeWhere((plan) => plan.id == planId);
-      _selectedPlan = null;
-    });
+  Future<void> _deletePlan() async {
+    if (_selectedPlan != null) {
+      String planId = _selectedPlan!.id;
+      setState(() {
+        _plans.removeWhere((plan) => plan.id == planId);
+        _selectedPlan = null;
+      });
 
-    final userInfo = UserInfo();
-    String userEmail = userInfo.userEmail ?? '';
+      final userInfo = UserInfo();
+      String userEmail = userInfo.userEmail ?? '';
 
-    try {
-      await FirebaseFirestore.instance
-          .collection(userEmail)
-          .doc(planId)
-          .delete();
-    } catch (error) {
-      debugPrint('Error deleting plan: $error');
-      // 에러 처리를 추가할 수 있습니다.
+      try {
+        await FirebaseFirestore.instance
+            .collection(userEmail)
+            .doc(planId)
+            .delete();
+      } catch (error) {
+        debugPrint('Error deleting plan: $error');
+        // 에러 처리를 추가할 수 있습니다.
+      }
     }
   }
-}
 
   void _persistPlansDebounced() {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
@@ -116,9 +117,11 @@ Future<void> _deletePlan() async {
     final userInfo = UserInfo();
     String userEmail = userInfo.userEmail ?? '';
     try {
-      final querySnapshot = await FirebaseFirestore.instance.collection(userEmail).get();
+      final querySnapshot =
+          await FirebaseFirestore.instance.collection(userEmail).get();
 
-      final plans = querySnapshot.docs.map((doc) => Plan.fromJson(doc.data())).toList();
+      final plans =
+          querySnapshot.docs.map((doc) => Plan.fromJson(doc.data())).toList();
 
       setState(() {
         _plans = plans;
@@ -128,7 +131,6 @@ Future<void> _deletePlan() async {
       // 에러 처리를 추가할 수 있습니다.
     }
   }
-
 
   List<Plan> _getPlansForDate(DateTime date) {
     return _plans
@@ -166,22 +168,33 @@ Future<void> _deletePlan() async {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          _buildTableCalendar(),
-          if (_selectedDay != null) _buildEventList(),
-          const SizedBox(height: 16),
-          _buildActionButtons(),
-          const SizedBox(height: 16),
-        ],
-      ),
-      /*
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Calendar'),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
+              },
+            ),
+          ),
+          body: Column(
+            children: [
+              _buildTableCalendar(),
+              if (_selectedDay != null) _buildEventList(),
+              const SizedBox(height: 16),
+              _buildActionButtons(),
+              const SizedBox(height: 16),
+            ],
+          ),
+          /*
       bottomNavigationBar: _buildBottomAppBar(),
       appBar: _buildAppBar(),
       */
-
-    );
+        );
   }
 
   Widget _buildTableCalendar() {
@@ -429,11 +442,11 @@ Future<void> _deletePlan() async {
               ),
             );
             if (result != null) {
-                setState(() {
-                  _plans = List<Plan>.from(result);
-                });
-                _persistPlans();
-              }
+              setState(() {
+                _plans = List<Plan>.from(result);
+              });
+              _persistPlans();
+            }
           },
           icon: const Icon(Icons.list),
           label: const Text('Plan List'),
@@ -441,6 +454,7 @@ Future<void> _deletePlan() async {
       ],
     );
   }
+
 /*
   Widget _buildBottomAppBar() {
     return BottomAppBar(
