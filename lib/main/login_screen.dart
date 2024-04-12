@@ -5,7 +5,7 @@ import 'package:untitled1/main/home_screen.dart';
 import 'package:untitled1/main/main_screen.dart';
 
 class LoginSignupScreen extends StatefulWidget {
-  const LoginSignupScreen({Key? key});
+  const LoginSignupScreen({super.key});
 
   @override
   State<LoginSignupScreen> createState() => _LoginSignupScreenState();
@@ -20,8 +20,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
   String userEmail = '';
   String userPassword = '';
 
-  TextEditingController _textController = TextEditingController(); // 이 부분에 추가
-  FocusNode _userNameFocus = FocusNode();
+  final TextEditingController _textController =
+      TextEditingController(); // 이 부분에 추가
+  final FocusNode _userNameFocus = FocusNode();
 
   void _tryValidation() {
     final isValid = _formKey.currentState!.validate();
@@ -36,11 +37,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
     _userNameFocus.dispose();
     super.dispose();
   }
+
   void _resetTyping() {
     setState(() {
       isTyping = false;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,7 +120,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   ],
                 ),
                 child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
+                  physics: const BouncingScrollPhysics(),
                   child: Column(
                     children: [
                       Row(
@@ -201,7 +204,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   onSaved: (value) {
                                     userName = value!;
                                   },
-                                  onTap: (){
+                                  onTap: () {
                                     setState(() {
                                       isTyping = true;
                                     });
@@ -215,15 +218,15 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                       color: Palette.iconColor,
                                     ),
                                     enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Palette.textColor1),
+                                      borderSide:
+                                          BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Palette.textColor1),
+                                      borderSide:
+                                          BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
@@ -252,7 +255,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   onSaved: (value) {
                                     userEmail = value!;
                                   },
-                                  onTap: (){
+                                  onTap: () {
                                     setState(() {
                                       isTyping = true;
                                     });
@@ -266,15 +269,15 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                       color: Palette.iconColor,
                                     ),
                                     enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Palette.textColor1),
+                                      borderSide:
+                                          BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Palette.textColor1),
+                                      borderSide:
+                                          BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
@@ -302,7 +305,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   onSaved: (value) {
                                     userPassword = value!;
                                   },
-                                  onTap: (){
+                                  onTap: () {
                                     setState(() {
                                       isTyping = true;
                                     });
@@ -316,15 +319,15 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                       color: Palette.iconColor,
                                     ),
                                     enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Palette.textColor1),
+                                      borderSide:
+                                          BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Palette.textColor1),
+                                      borderSide:
+                                          BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
@@ -360,7 +363,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   onSaved: (value) {
                                     userEmail = value!;
                                   },
-                                  onTap: (){
+                                  onTap: () {
                                     setState(() {
                                       isTyping = true;
                                     });
@@ -374,15 +377,15 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                       color: Palette.iconColor,
                                     ),
                                     enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Palette.textColor1),
+                                      borderSide:
+                                          BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Palette.textColor1),
+                                      borderSide:
+                                          BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
@@ -410,7 +413,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   onSaved: (value) {
                                     userPassword = value!;
                                   },
-                                  onTap: (){
+                                  onTap: () {
                                     setState(() {
                                       isTyping = true;
                                     });
@@ -424,15 +427,15 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                       color: Palette.iconColor,
                                     ),
                                     enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Palette.textColor1),
+                                      borderSide:
+                                          BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Palette.textColor1),
+                                      borderSide:
+                                          BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
@@ -485,12 +488,14 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                               return const HomePage();
                                             },
                                           ),
-                                        );}
+                                        );
+                                      }
                                     }
                                   } catch (e) {
                                     debugPrint(e.toString());
                                     if (context.mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         const SnackBar(
                                           content: Text(
                                               'Please check your email and password'),
@@ -503,13 +508,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                 if (!isSignupScreen) {
                                   _tryValidation();
                                   try {
-                                    final newUser =
-                                    await _authentication.signInWithEmailAndPassword(
+                                    final newUser = await _authentication
+                                        .signInWithEmailAndPassword(
                                       email: userEmail,
                                       password: userPassword,
                                     );
                                     if (newUser.user != null) {
-                                      if(context.mounted){
+                                      if (context.mounted) {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -547,7 +552,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                       AnimatedPositioned(
                         duration: const Duration(milliseconds: 500),
                         curve: Curves.easeIn,
-                        top: isSignupScreen ? MediaQuery.of(context).size.height - 100: MediaQuery.of(context).size.height - 95,
+                        top: isSignupScreen
+                            ? MediaQuery.of(context).size.height - 100
+                            : MediaQuery.of(context).size.height - 95,
                         right: 0,
                         left: 0,
                         child: Column(
@@ -558,13 +565,18 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                             TextButton.icon(
                               onPressed: () async {
                                 try {
-                                  final userCredential = await _authentication.signInWithPopup(GoogleAuthProvider());
+                                  final userCredential = await _authentication
+                                      .signInWithPopup(GoogleAuthProvider());
                                   final user = userCredential.user;
                                   if (user != null) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => HomePage()),
-                                    );
+                                    if (context.mounted) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const HomePage()),
+                                      );
+                                    }
                                   }
                                 } catch (e) {
                                   debugPrint('Google Sign-in Error: $e');
@@ -575,7 +587,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                 minimumSize: const Size(155, 40),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
-                                  side: BorderSide(color: Colors.black),
+                                  side: const BorderSide(color: Colors.black),
                                 ),
                                 backgroundColor: Colors.white,
                               ),
