@@ -30,7 +30,7 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
   List<String> _participants = [];
   final TextEditingController _descriptionController = TextEditingController();
   List<Plan> _plans = [];
-
+  String? _planId;
   @override
   void initState() {
     super.initState();
@@ -184,13 +184,14 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
     try {
       final firestoreInstance = FirebaseFirestore.instance;
       DocumentReference documentReference = await firestoreInstance.collection('plans').add(updatedPlan.toJson());
-      String planId = documentReference.id; // Firestore에서 생성된 id를 가져옴
-      updatedPlan = updatedPlan.copyWith(id: planId); // Plan 객체에 가져온 id를 설정
-      await firestoreInstance.collection('plans').doc(planId).set(updatedPlan.toJson());
+      _planId = documentReference.id; // Firestore에서 생성된 id를 가져옴
+      updatedPlan = updatedPlan.copyWith(id: _planId); // Plan 객체에 가져온 id를 설정
+      await firestoreInstance.collection('plans').doc(_planId).set(updatedPlan.toJson());
       setState(() {
         _plans.add(updatedPlan);
         _startDate = null; // 추가 후 초기화
-        _endDate = null; // 추가 후 초기화
+        _endDate = null;
+        _planId = null;// 추가 후 초기화
         _participants = []; // 추가 후 초기화
         _descriptionController.clear(); // 추가 후 초기화
       });
