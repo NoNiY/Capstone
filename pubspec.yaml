@@ -81,6 +81,9 @@ flutter:
     - assets/background/
     - assets/red.jpg
     - assets/coming_soon.png
+    - assets/images/login_back.png
+    - assets/images/arrow.png
+    - assets/images/google.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -134,6 +137,16 @@ flutter:
             weight: 800
           - asset: assets/fonts/Pretendard-Black.ttf
             weight: 900
+      - family: continuous
+        fonts:
+          - asset: assets/fonts/continuous.ttf
+
+
+
+
+
+
+
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
