@@ -13,7 +13,7 @@ class LoginSignupScreen extends StatefulWidget {
 
 class _LoginSignupScreenState extends State<LoginSignupScreen> {
   final _authentication = FirebaseAuth.instance;
-
+  bool isTyping = false;
   bool isSignupScreen = true;
   final _formKey = GlobalKey<FormState>();
   String userName = '';
@@ -36,7 +36,11 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
     _userNameFocus.dispose();
     super.dispose();
   }
-
+  void _resetTyping() {
+    setState(() {
+      isTyping = false;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,6 +49,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
+          _resetTyping();
         },
         child: Stack(
           children: [
@@ -92,12 +97,12 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
             AnimatedPositioned(
               duration: const Duration(milliseconds: 500),
               curve: Curves.easeIn,
-              top: 500,
+              top: isTyping ? 300 : 500,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 500),
                 curve: Curves.easeIn,
                 padding: const EdgeInsets.all(20.0),
-                height: isSignupScreen ? 350.0 : 350.0,
+                height: isSignupScreen ? 400.0 : 350.0,
                 width: MediaQuery.of(context).size.width - 40,
                 margin: const EdgeInsets.symmetric(horizontal: 20.0),
                 decoration: BoxDecoration(
@@ -195,6 +200,11 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   },
                                   onSaved: (value) {
                                     userName = value!;
+                                  },
+                                  onTap: (){
+                                    setState(() {
+                                      isTyping = true;
+                                    });
                                   },
                                   onChanged: (value) {
                                     userName = value;
