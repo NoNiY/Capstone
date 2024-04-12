@@ -49,7 +49,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
         child: Stack(
           children: [
             Positioned.fill(
-              top: -140,
+              top: -040,
               child: Image.asset(
                 'assets/images/login_back.png', // 이미지 파일 경로로 수정하세요.
                 fit: BoxFit.cover,
@@ -112,7 +112,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   ],
                 ),
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.only(bottom: 20),
+                  physics: BouncingScrollPhysics(),
                   child: Column(
                     children: [
                       Row(
@@ -422,7 +422,102 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                       AnimatedPositioned(
                         duration: const Duration(milliseconds: 500),
                         curve: Curves.easeIn,
-                        top: isSignupScreen ? MediaQuery.of(context).size.height - 50 : MediaQuery.of(context).size.height - 95,
+                        top: isSignupScreen ? 790 : 790,
+                        right: 0,
+                        left: 0,
+                        child: Center(
+                          child: Container(
+                            padding: const EdgeInsets.all(5),
+                            height: 50,
+                            width: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: GestureDetector(
+                              onTap: () async {
+                                if (isSignupScreen) {
+                                  _tryValidation();
+
+                                  try {
+                                    final newUser = await _authentication
+                                        .createUserWithEmailAndPassword(
+                                      email: userEmail,
+                                      password: userPassword,
+                                    );
+
+                                    if (newUser.user != null) {
+                                      if (context.mounted) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) {
+                                              return const HomePage();
+                                            },
+                                          ),
+                                        );}
+                                    }
+                                  } catch (e) {
+                                    debugPrint(e.toString());
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Please check your email and password'),
+                                          backgroundColor: Colors.blue,
+                                        ),
+                                      );
+                                    }
+                                  }
+                                }
+                                if (!isSignupScreen) {
+                                  _tryValidation();
+                                  try {
+                                    final newUser =
+                                    await _authentication.signInWithEmailAndPassword(
+                                      email: userEmail,
+                                      password: userPassword,
+                                    );
+                                    if (newUser.user != null) {
+                                      if(context.mounted){
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) {
+                                              return const HomePage();
+                                            },
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  } catch (e) {
+                                    debugPrint(e.toString());
+                                  }
+                                }
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(5),
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: Image.asset(
+                                  'assets/images/arrow.png', // 이미지 파일 경로로 수정하세요.
+                                  fit: BoxFit.cover,
+                                  height: 24, // 이미지의 높이를 조정합니다.
+                                  width: 24, // 이미지의 너비를 조정합니다.
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      AnimatedPositioned(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeIn,
+                        top: isSignupScreen ? MediaQuery.of(context).size.height - 100: MediaQuery.of(context).size.height - 95,
                         right: 0,
                         left: 0,
                         child: Column(
@@ -465,101 +560,6 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                         ),
                       ),
                     ],
-                  ),
-                ),
-              ),
-            ),
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.easeIn,
-              top: isSignupScreen ? 790 : 790,
-              right: 0,
-              left: 0,
-              child: Center(
-                child: Container(
-                  padding: const EdgeInsets.all(5),
-                  height: 50,
-                  width: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  child: GestureDetector(
-                    onTap: () async {
-                      if (isSignupScreen) {
-                        _tryValidation();
-
-                        try {
-                          final newUser = await _authentication
-                              .createUserWithEmailAndPassword(
-                            email: userEmail,
-                            password: userPassword,
-                          );
-
-                          if (newUser.user != null) {
-                            if (context.mounted) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return const HomePage();
-                                },
-                              ),
-                            );}
-                          }
-                        } catch (e) {
-                          debugPrint(e.toString());
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                    'Please check your email and password'),
-                                backgroundColor: Colors.blue,
-                              ),
-                            );
-                          }
-                        }
-                      }
-                      if (!isSignupScreen) {
-                        _tryValidation();
-                        try {
-                          final newUser =
-                          await _authentication.signInWithEmailAndPassword(
-                            email: userEmail,
-                            password: userPassword,
-                          );
-                          if (newUser.user != null) {
-                            if(context.mounted){
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return const HomePage();
-                                },
-                              ),
-                            );
-                            }
-                          }
-                        } catch (e) {
-                          debugPrint(e.toString());
-                        }
-                      }
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(5),
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Image.asset(
-                        'assets/images/arrow.png', // 이미지 파일 경로로 수정하세요.
-                        fit: BoxFit.cover,
-                        height: 24, // 이미지의 높이를 조정합니다.
-                        width: 24, // 이미지의 너비를 조정합니다.
-                      ),
-                    ),
                   ),
                 ),
               ),
