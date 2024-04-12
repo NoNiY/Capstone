@@ -252,6 +252,11 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   onSaved: (value) {
                                     userEmail = value!;
                                   },
+                                  onTap: (){
+                                    setState(() {
+                                      isTyping = true;
+                                    });
+                                  },
                                   onChanged: (value) {
                                     userEmail = value;
                                   },
@@ -296,6 +301,11 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   },
                                   onSaved: (value) {
                                     userPassword = value!;
+                                  },
+                                  onTap: (){
+                                    setState(() {
+                                      isTyping = true;
+                                    });
                                   },
                                   onChanged: (value) {
                                     userPassword = value;
@@ -350,6 +360,11 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   onSaved: (value) {
                                     userEmail = value!;
                                   },
+                                  onTap: (){
+                                    setState(() {
+                                      isTyping = true;
+                                    });
+                                  },
                                   onChanged: (value) {
                                     userEmail = value;
                                   },
@@ -394,6 +409,11 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   },
                                   onSaved: (value) {
                                     userPassword = value!;
+                                  },
+                                  onTap: (){
+                                    setState(() {
+                                      isTyping = true;
+                                    });
                                   },
                                   onChanged: (value) {
                                     userPassword = value;
