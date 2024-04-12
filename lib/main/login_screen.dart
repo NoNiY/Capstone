@@ -209,6 +209,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   onChanged: (value) {
                                     userName = value;
                                   },
+                                  onFieldSubmitted: (value) {
+                                    _resetTyping();
+                                  },
                                   decoration: const InputDecoration(
                                     prefixIcon: Icon(
                                       Icons.account_circle,
@@ -260,6 +263,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   onChanged: (value) {
                                     userEmail = value;
                                   },
+                                  onFieldSubmitted: (value) {
+                                    _resetTyping();
+                                  },
                                   decoration: const InputDecoration(
                                     prefixIcon: Icon(
                                       Icons.email,
@@ -309,6 +315,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   },
                                   onChanged: (value) {
                                     userPassword = value;
+                                  },
+                                  onFieldSubmitted: (value) {
+                                    _resetTyping();
                                   },
                                   decoration: const InputDecoration(
                                     prefixIcon: Icon(
@@ -368,6 +377,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   onChanged: (value) {
                                     userEmail = value;
                                   },
+                                  onFieldSubmitted: (value) {
+                                    _resetTyping();
+                                  },
                                   decoration: const InputDecoration(
                                     prefixIcon: Icon(
                                       Icons.email,
@@ -417,6 +429,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   },
                                   onChanged: (value) {
                                     userPassword = value;
+                                  },
+                                  onFieldSubmitted: (value) {
+                                    _resetTyping();
                                   },
                                   decoration: const InputDecoration(
                                     prefixIcon: Icon(
