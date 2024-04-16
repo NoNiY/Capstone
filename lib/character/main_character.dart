@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:untitled1/character/character_change.dart';
-import 'package:untitled1/character/background_change.dart';
 import 'package:untitled1/main/home_screen.dart';
-import 'package:untitled1/main/main_screen.dart';
+import 'store_image.dart';
+import 'background_change.dart';
+import 'character_change.dart';
 
 class MainCharacterScreen extends StatelessWidget {
-  final String? characterImage;
-  final String? backgroundImage;
-
-  const MainCharacterScreen({super.key, this.characterImage, this.backgroundImage});
+  const MainCharacterScreen({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,14 +14,14 @@ class MainCharacterScreen extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           Image.asset(
-            backgroundImage ?? 'assets/background/background1.jpg',
+            StoreImage.backgroundImage,
             fit: BoxFit.fill,
           ),
           Positioned(
             left: -65,
             bottom: 200,
             child: Image.asset(
-              characterImage ?? 'assets/character/character1.png',
+              StoreImage.characterImage,
               height: 350,
               width: 350,
             ),
@@ -37,10 +34,7 @@ class MainCharacterScreen extends StatelessWidget {
           Positioned(
             right: 16,
             bottom: 16,
-            child: OtherCharacterStatus(
-              characterImage: characterImage,
-              backgroundImage: backgroundImage,
-            ),
+            child: OtherCharacterStatus(),
           ),
         ],
       ),
@@ -49,7 +43,7 @@ class MainCharacterScreen extends StatelessWidget {
 }
 
 class CharacterStatus extends StatelessWidget {
-  const CharacterStatus({super.key});
+  const CharacterStatus({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -64,10 +58,7 @@ class CharacterStatus extends StatelessWidget {
 }
 
 class OtherCharacterStatus extends StatelessWidget {
-  final String? characterImage;
-  final String? backgroundImage;
-
-  const OtherCharacterStatus({super.key, this.characterImage, this.backgroundImage});
+  const OtherCharacterStatus({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -85,14 +76,7 @@ class OtherCharacterStatus extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => const ChangeCharacterScreen(),
               ),
-            ).then((value) {
-              if (value != null) {
-                Navigator.pop(context, {
-                  'characterImage': value['characterImage'],
-                  'backgroundImage': backgroundImage
-                });
-              }
-            });
+            );
           },
           child: const Text(
             '캐릭터 변경',
@@ -113,14 +97,7 @@ class OtherCharacterStatus extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => const ChangeBackgroundScreen(),
               ),
-            ).then((value) {
-              if (value != null) {
-                Navigator.pop(context, {
-                  'characterImage': characterImage,
-                  'backgroundImage': value['backgroundImage']
-                });
-              }
-            });
+            );
           },
           child: const Text(
             '테마 변경',
@@ -155,10 +132,7 @@ class OtherCharacterStatus extends StatelessWidget {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => MainScreen(
-                  characterImage: characterImage,
-                  backgroundImage: backgroundImage,
-                ),
+                builder: (context) => const HomePage(),
               ),
             );
           },
