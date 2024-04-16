@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:untitled1/character/main_character.dart'; // MainCharacterScreen으로 이동할 수 있도록 import 추가
+import 'package:untitled1/main/home_screen.dart';
+import 'store_image.dart';
 
 class ChangeBackgroundScreen extends StatelessWidget {
-  const ChangeBackgroundScreen({super.key});
+  const ChangeBackgroundScreen({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +16,7 @@ class ChangeBackgroundScreen extends StatelessWidget {
             Icons.person_add_alt,
             size: 40,
           ),
-          onPressed: () {
-            // 왼쪽 아이콘을 눌렀을 때의 동작
-          },
+          onPressed: () {},
         ),
         actions: <Widget>[
           IconButton(
@@ -25,9 +24,7 @@ class ChangeBackgroundScreen extends StatelessWidget {
               Icons.shopping_cart,
               size: 40,
             ),
-            onPressed: () {
-              // 오른쪽 아이콘을 눌렀을 때의 동작
-            },
+            onPressed: () {},
           ),
         ],
       ),
@@ -53,10 +50,10 @@ class ChangeBackgroundScreen extends StatelessWidget {
               ),
             ),
           ),
-          const Expanded(
+          Expanded(
             child: AllBackgroundStatus(),
           ),
-          const GoToMainBackgroundStatus(),
+          GoToMainBackgroundStatus(),
         ],
       ),
     );
@@ -64,7 +61,7 @@ class ChangeBackgroundScreen extends StatelessWidget {
 }
 
 class AllBackgroundStatus extends StatelessWidget {
-  const AllBackgroundStatus({super.key});
+  const AllBackgroundStatus({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -81,14 +78,15 @@ class AllBackgroundStatus extends StatelessWidget {
                     const SizedBox(height: 150),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
+                        StoreImage.backgroundImage = 'assets/background/background1.jpg';
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const MainCharacterScreen(backgroundImage: 'assets/background/background1.jpg'), // MainCharacterScreen으로 backgroundImage 전달
+                            builder: (context) => const HomePage(),
                           ),
                         );
                       },
-                      child: const BackgroundImage(
+                      child: BackgroundImage(
                         imagePath: 'assets/background/background1.jpg',
                         height: 160,
                         width: 160,
@@ -104,14 +102,15 @@ class AllBackgroundStatus extends StatelessWidget {
                     const SizedBox(height: 150),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
+                        StoreImage.backgroundImage = 'assets/background/background2.jpg';
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const MainCharacterScreen(backgroundImage: 'assets/background/background2.jpg'), // MainCharacterScreen으로 backgroundImage 전달
+                            builder: (context) => const HomePage(),
                           ),
                         );
                       },
-                      child: const BackgroundImage(
+                      child: BackgroundImage(
                         imagePath: 'assets/background/background2.jpg',
                         height: 150,
                         width: 150,
@@ -134,14 +133,15 @@ class AllBackgroundStatus extends StatelessWidget {
                     const SizedBox(height: 30),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
+                        StoreImage.backgroundImage = 'assets/background/background3.jpg';
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const MainCharacterScreen(backgroundImage: 'assets/background/background3.jpg'), // MainCharacterScreen으로 backgroundImage 전달
+                            builder: (context) => const HomePage(),
                           ),
                         );
                       },
-                      child: const BackgroundImage(
+                      child: BackgroundImage(
                         imagePath: 'assets/background/background3.jpg',
                         height: 150,
                         width: 150,
@@ -156,14 +156,33 @@ class AllBackgroundStatus extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MainCharacterScreen(backgroundImage: 'assets/coming_soon.png'), // MainCharacterScreen으로 backgroundImage 전달
-                          ),
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Center(child: Text('준비중입니다')),
+                              content: Container(
+                                width: MediaQuery.of(context).size.width * 0.7,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const SizedBox(height: 20),
+                                    const Text('5/11일 출시 예정입니다'),
+                                    const SizedBox(height: 20),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('확인'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
                         );
                       },
-                      child: const BackgroundImage(
+                      child: BackgroundImage(
                         imagePath: 'assets/coming_soon.png',
                         height: 230,
                         width: 100,
@@ -189,7 +208,8 @@ class BackgroundImage extends StatelessWidget {
   final double? top;
   final double? bottom;
 
-  const BackgroundImage({super.key,
+  const BackgroundImage({
+    Key? key,
     required this.imagePath,
     this.height = 80,
     this.width = 80,
@@ -197,7 +217,7 @@ class BackgroundImage extends StatelessWidget {
     this.right,
     this.top,
     this.bottom,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -216,7 +236,7 @@ class BackgroundImage extends StatelessWidget {
 }
 
 class GoToMainBackgroundStatus extends StatelessWidget {
-  const GoToMainBackgroundStatus({super.key});
+  const GoToMainBackgroundStatus({Key? key});
 
   @override
   Widget build(BuildContext context) {
