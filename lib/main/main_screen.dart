@@ -7,6 +7,7 @@ import 'package:untitled1/Plan/_plan.dart';
 import 'package:untitled1/main/log_out.dart';
 import 'package:untitled1/chat/chat_room.dart';
 import 'package:untitled1/character/main_character.dart';
+import '../character/store_image.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key, this.characterImage, this.backgroundImage});
@@ -14,10 +15,10 @@ class MainScreen extends StatefulWidget {
   final String? characterImage;
   final String? backgroundImage;
 
-
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
+
 class _MainScreenState extends State<MainScreen> {
   late String _currentCharacterImage;
   late String _currentBackgroundImage;
@@ -28,8 +29,8 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     getCurrentUser();
-    _currentCharacterImage = widget.characterImage ?? 'assets/character/character1.png';
-    _currentBackgroundImage = widget.backgroundImage ?? 'assets/background/background1.jpg';
+    _currentCharacterImage = widget.characterImage ?? StoreImage.characterImage;
+    _currentBackgroundImage = widget.backgroundImage ?? StoreImage.backgroundImage;
   }
 
   void getCurrentUser() {
