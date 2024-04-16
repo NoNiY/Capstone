@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:untitled1/character/main_character.dart'; // MainCharacterScreen으로 이동할 수 있도록 import 추가
+import 'package:untitled1/main/home_screen.dart';
+import 'package:untitled1/character/main_character.dart';
+import 'store_image.dart';
 
 class ChangeCharacterScreen extends StatelessWidget {
-  const ChangeCharacterScreen({super.key});
+  const ChangeCharacterScreen({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +17,7 @@ class ChangeCharacterScreen extends StatelessWidget {
             Icons.person_add_alt,
             size: 40,
           ),
-          onPressed: () {
-            // 왼쪽 아이콘을 눌렀을 때의 동작
-          },
+          onPressed: () {},
         ),
         actions: <Widget>[
           IconButton(
@@ -25,9 +25,7 @@ class ChangeCharacterScreen extends StatelessWidget {
               Icons.shopping_cart,
               size: 40,
             ),
-            onPressed: () {
-              // 오른쪽 아이콘을 눌렀을 때의 동작
-            },
+            onPressed: () {},
           ),
         ],
       ),
@@ -53,10 +51,10 @@ class ChangeCharacterScreen extends StatelessWidget {
               ),
             ),
           ),
-          const Expanded(
+          Expanded(
             child: AllCharacterStatus(),
           ),
-          const GoToMainCharacterStatus(),
+          GoToMainCharacterStatus(),
         ],
       ),
     );
@@ -64,7 +62,7 @@ class ChangeCharacterScreen extends StatelessWidget {
 }
 
 class AllCharacterStatus extends StatelessWidget {
-  const AllCharacterStatus({super.key});
+  const AllCharacterStatus({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -81,14 +79,15 @@ class AllCharacterStatus extends StatelessWidget {
                     const SizedBox(height: 40),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
+                        StoreImage.characterImage = 'assets/character/character1.png';
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const MainCharacterScreen(characterImage: 'assets/character/character1.png'), // MainCharacterScreen으로 characterImage 전달
+                            builder: (context) => const HomePage(),
                           ),
                         );
                       },
-                      child: const CharacterImage(
+                      child: CharacterImage(
                         imagePath: 'assets/character/character1.png',
                         height: 350,
                         width: 350,
@@ -104,14 +103,15 @@ class AllCharacterStatus extends StatelessWidget {
                     const SizedBox(height: 150),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
+                        StoreImage.characterImage = 'assets/character/character2.png';
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const MainCharacterScreen(characterImage: 'assets/character/character2.png'), // MainCharacterScreen으로 characterImage 전달
+                            builder: (context) => const HomePage(),
                           ),
                         );
                       },
-                      child: const CharacterImage(
+                      child: CharacterImage(
                         imagePath: 'assets/character/character2.png',
                         height: 150,
                         width: 150,
@@ -134,14 +134,15 @@ class AllCharacterStatus extends StatelessWidget {
                     const SizedBox(height: 30),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
+                        StoreImage.characterImage = 'assets/character/character3.png';
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const MainCharacterScreen(characterImage: 'assets/character/character3.png'), // MainCharacterScreen으로 characterImage 전달
+                            builder: (context) => const HomePage(),
                           ),
                         );
                       },
-                      child: const CharacterImage(
+                      child: CharacterImage(
                         imagePath: 'assets/character/character3.png',
                         height: 150,
                         width: 150,
@@ -156,14 +157,33 @@ class AllCharacterStatus extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MainCharacterScreen(characterImage: 'assets/coming_soon.png'), // MainCharacterScreen으로 characterImage 전달
-                          ),
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Center(child: Text('준비중입니다')),
+                              content: Container(
+                                width: MediaQuery.of(context).size.width * 0.7, // 팝업 창의 가로 길이를 조정합니다.
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min, // 세로 방향 크기를 최소화합니다.
+                                  children: [
+                                    const SizedBox(height: 20),
+                                    const Text('5/11일 출시 예정입니다'),
+                                    const SizedBox(height: 20),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context); // 팝업 창을 닫습니다.
+                                      },
+                                      child: const Text('확인'),
+                                    ),
+                                  ],
+                                ),
+                            ),
+                            );
+                          },
                         );
                       },
-                      child: const CharacterImage(
+                      child: CharacterImage(
                         imagePath: 'assets/coming_soon.png',
                         height: 230,
                         width: 100,
@@ -189,7 +209,8 @@ class CharacterImage extends StatelessWidget {
   final double? top;
   final double? bottom;
 
-  const CharacterImage({super.key,
+  const CharacterImage({
+    Key? key,
     required this.imagePath,
     this.height = 80,
     this.width = 80,
@@ -197,7 +218,7 @@ class CharacterImage extends StatelessWidget {
     this.right,
     this.top,
     this.bottom,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -216,7 +237,7 @@ class CharacterImage extends StatelessWidget {
 }
 
 class GoToMainCharacterStatus extends StatelessWidget {
-  const GoToMainCharacterStatus({super.key});
+  const GoToMainCharacterStatus({Key? key});
 
   @override
   Widget build(BuildContext context) {
