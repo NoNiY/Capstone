@@ -6,7 +6,7 @@ import 'package:untitled1/user_info.dart';
 import 'package:untitled1/chat/_teamplan.dart';
 
 class TeamPlanScreen extends StatelessWidget {
-  const TeamPlanScreen({Key? key});
+  const TeamPlanScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class TeamPlanScreen extends StatelessWidget {
 }
 
 class TeamPlanListScreen extends StatefulWidget {
-  const TeamPlanListScreen({Key? key});
+  const TeamPlanListScreen({super.key});
 
   @override
   State<TeamPlanListScreen> createState() => _TeamPlanListScreenState();
@@ -27,7 +27,7 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
   DateTime? _startDate;
   DateTime? _endDate;
   List<String> _participants = [];
-  TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
   List<Plan> _plans = [];
   String? _planId;
   @override
@@ -82,23 +82,25 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
       else {
         // 시작일이 설정되어 있고 선택한 날짜가 시작일 이전인 경우
         if (_startDate != null && pickedDate.isBefore(_startDate!)) {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('날짜 선택 오류'),
-                content: Text('종료일은 시작일 이후의 날짜로 선택해주세요.'),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('확인'),
-                  ),
-                ],
-              );
-            },
-          );
+          if (context.mounted) {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('날짜 선택 오류'),
+                  content: const Text('종료일은 시작일 이후의 날짜로 선택해주세요.'),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('확인'),
+                    ),
+                  ],
+                );
+              },
+            );
+          }
           return null; // 종료일이 시작일 이전이면 선택한 날짜를 취소하고 종료
         }
         setState(() {
@@ -110,35 +112,33 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
     return pickedDate;
   }
 
-
-
   void _addParticipant(StateSetter setState) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        final TextEditingController _controller = TextEditingController();
+        final TextEditingController controller = TextEditingController();
         return AlertDialog(
-          title: Text('참여자 추가'),
+          title: const Text('참여자 추가'),
           content: TextField(
-            controller: _controller,
-            decoration: InputDecoration(labelText: '이름'),
+            controller: controller,
+            decoration: const InputDecoration(labelText: '이름'),
           ),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 setState(() {
-                  _participants.add(_controller.text);
-                  _controller.clear(); // 입력 필드 비우기
+                  _participants.add(controller.text);
+                  controller.clear(); // 입력 필드 비우기
                 });
                 Navigator.of(context).pop();
               },
-              child: Text('추가'),
+              child: const Text('추가'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('취소'),
+              child: const Text('취소'),
             ),
           ],
         );
@@ -153,47 +153,46 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
-              title: Text('새로운 계획 추가'),
+              title: const Text('새로운 계획 추가'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   _buildDateSelector('시작일', _startDate, true, setState),
                   _buildDateSelector('종료일', _endDate, false, setState),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   TextField(
                     controller: _descriptionController,
-                    decoration: InputDecoration(labelText: '계획 내용'),
+                    decoration: const InputDecoration(labelText: '계획 내용'),
                   ),
-                  SizedBox(height: 16),
-                  Text('참여자'),
+                  const SizedBox(height: 16),
+                  const Text('참여자'),
                   Wrap(
                     children: _participants.map((participant) {
                       return Padding(
-                        padding: EdgeInsets.all(4),
+                        padding: const EdgeInsets.all(4),
                         child: Chip(
                           label: Text(participant),
                         ),
                       );
                     }).toList(),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   ElevatedButton(
                     onPressed: () => _addParticipant(setState),
-                    child: Text('참여자 추가'),
+                    child: const Text('참여자 추가'),
                   ),
                 ],
               ),
               actions: <Widget>[
                 TextButton(
                   onPressed: _onSave,
-                  child: Text('추가'),
+                  child: const Text('추가'),
                 ),
-
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('취소'),
+                  child: const Text('취소'),
                 ),
               ],
             );
@@ -202,8 +201,6 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
       },
     );
   }
-
-
 
   void _onSave() async {
     final userInfo = UserInfo();
@@ -223,15 +220,19 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
 
     try {
       final firestoreInstance = FirebaseFirestore.instance;
-      DocumentReference documentReference = await firestoreInstance.collection('plans').add(updatedPlan.toJson());
+      DocumentReference documentReference =
+          await firestoreInstance.collection('plans').add(updatedPlan.toJson());
       _planId = documentReference.id; // Firestore에서 생성된 id를 가져옴
       updatedPlan = updatedPlan.copyWith(id: _planId); // Plan 객체에 가져온 id를 설정
-      await firestoreInstance.collection('plans').doc(_planId).set(updatedPlan.toJson());
+      await firestoreInstance
+          .collection('plans')
+          .doc(_planId)
+          .set(updatedPlan.toJson());
       setState(() {
         _plans.add(updatedPlan);
         _startDate = null; // 추가 후 초기화
         _endDate = null;
-        _planId = null;// 추가 후 초기화
+        _planId = null; // 추가 후 초기화
         _participants = []; // 추가 후 초기화
         _descriptionController.clear(); // 추가 후 초기화
       });
@@ -245,7 +246,6 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
       // 예외 처리 코드 추가 (예를 들어, 사용자에게 오류 메시지를 보여줄 수 있음)
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -350,11 +350,12 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
     );
   }
 
-  Widget _buildDateSelector(String label, DateTime? date, bool isStartDate, StateSetter setState) {
+  Widget _buildDateSelector(
+      String label, DateTime? date, bool isStartDate, StateSetter setState) {
     return Row(
       children: <Widget>[
         Text(label),
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
         ElevatedButton(
           onPressed: () async {
             final pickedDate = await _selectDate(context, isStartDate);

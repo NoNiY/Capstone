@@ -8,10 +8,10 @@ class PlanDetailsScreen extends StatefulWidget {
   final Plan plan;
   final int index;
 
-  const PlanDetailsScreen({Key? key, required this.plan, required this.index}) : super(key: key);
+  const PlanDetailsScreen({super.key, required this.plan, required this.index});
 
   @override
-  _PlanDetailsScreenState createState() => _PlanDetailsScreenState();
+  State<PlanDetailsScreen> createState() => _PlanDetailsScreenState();
 }
 
 class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
@@ -76,19 +76,19 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        final TextEditingController _controller = TextEditingController();
+        final TextEditingController controller = TextEditingController();
         return AlertDialog(
           title: const Text('참여자 추가'),
           content: TextField(
-            controller: _controller,
+            controller: controller,
             decoration: const InputDecoration(labelText: '이름'),
           ),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 setState(() {
-                  _participants.add(_controller.text);
-                  _controller.clear(); // 입력 필드 비우기
+                  _participants.add(controller.text);
+                  controller.clear(); // 입력 필드 비우기
                 });
                 Navigator.of(context).pop();
               },
@@ -117,11 +117,10 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(
-                    builder: (BuildContext context){
-                      return const ChatScreen();
-                    }
-                ));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                  return const ChatScreen();
+                }));
               },
               child: const Text('확인'),
             ),
