@@ -25,14 +25,19 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
   }
 
   Future<void> _fetchParticipants() async {
+    final userInfo = UserInfo();
     try {
       DocumentSnapshot doc = await FirebaseFirestore.instance
           .collection('plans')
           .doc(widget.plan.id)
           .get();
       List<String> participants = List.from(doc['participants']);
+
+      // 본인 이메일 제거
+      participants.removeWhere((participant) => participant == userInfo.userEmail);
+
       setState(() {
-        _participants = participants;
+        _participants = participants.toSet().toList();
       });
     } catch (e) {
       debugPrint('Firestore에서 데이터 가져오기 중 오류 발생: $e');
