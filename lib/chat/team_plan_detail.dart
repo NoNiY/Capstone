@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:untitled1/chat/team_plan_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:untitled1/chat/_teamplan.dart';
 import 'package:untitled1/chat/chat_room.dart';
+import 'package:untitled1/user_info.dart';
 
 class PlanDetailsScreen extends StatefulWidget {
   final Plan plan;
@@ -16,11 +17,40 @@ class PlanDetailsScreen extends StatefulWidget {
 
 class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
   List<String> _participants = [];
-
+  List<Plan> _plans = [];
   @override
   void initState() {
     super.initState();
     _participants = List.from(widget.plan.participants);
+    _fetchPlans();
+  }
+  Future<void> _fetchPlans() async {
+    final userInfo = UserInfo();
+    String userEmail = userInfo.userEmail ?? '';
+
+    try {
+      final firestoreInstance = FirebaseFirestore.instance;
+
+      // 현재 계획이 아닌 모든 계획에 대한 참여자를 가져오기 위해 별도의 쿼리 필요
+      QuerySnapshot allPlansSnapshot = await firestoreInstance
+          .collection('plans')
+          .where('participants', arrayContains: userEmail)
+          .get();
+
+      // 중복된 참여자를 제거하고 _participants에 저장
+      List<String> participants = [];
+      allPlansSnapshot.docs.forEach((doc) {
+        List<String> docParticipants = ((doc.data() as Map<String, dynamic>?)?['participants'] as List<dynamic>?)?.map((participant) => participant.toString())?.toList() ?? [];
+        participants.addAll(docParticipants.whereType<String>().where((participant) => participant != userEmail));
+      });
+
+      setState(() {
+        _participants = participants.toSet().toList(); // 중복 제거를 위해 Set 활용
+      });
+    } catch (e) {
+      debugPrint('Firestore에서 데이터 가져오기 중 오류 발생: $e');
+      // 예외 처리 코드 추가
+    }
   }
 
   @override
@@ -119,7 +149,7 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
                 Navigator.pop(context);
                 Navigator.push(context,
                     MaterialPageRoute(builder: (BuildContext context) {
-                  return const ChatScreen();
+                  return ChatScreen(planId: widget.plan.id);
                 }));
               },
               child: const Text('확인'),

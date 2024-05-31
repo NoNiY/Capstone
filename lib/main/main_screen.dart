@@ -64,12 +64,12 @@ class _MainScreenState extends State<MainScreen> {
             child: Column(
               children: <Widget>[
                 Container(
-                  width: 390,
-                  height: 590,
+                  width: 440,
+                  height: 740,
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage(_currentBackgroundImage),
-                      fit: BoxFit.fill, // 이미지가 부모 컨테이너에 꽉 차도록 설정
+                      fit: BoxFit.cover, // 이미지가 부모 컨테이너에 꽉 차도록 설정
                     ),
                   ),
                   child: Column(

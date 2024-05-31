@@ -4,7 +4,9 @@ import 'package:untitled1/chat/chat_bubble.dart';
 import 'package:untitled1/user_info.dart';
 
 class Messages extends StatelessWidget {
-  const Messages({super.key});
+  final String planId; // planId를 받도록 수정
+
+  const Messages({super.key, required this.planId});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +14,9 @@ class Messages extends StatelessWidget {
     String userEmail = userInfo.userEmail ?? '';
     return StreamBuilder(
       stream: FirebaseFirestore.instance
-          .collection('chatting')
+          .collection('plans')
+          .doc(planId) // 수정된 부분
+          .collection('chat_room')
           .orderBy('time', descending: true)
           .snapshots(),
       builder: (context,

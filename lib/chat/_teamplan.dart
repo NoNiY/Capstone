@@ -53,7 +53,7 @@ class Plan {
       name: json['name'],
       startDate: DateTime.parse(json['startDate']),
       endDate: DateTime.parse(json['endDate']),
-      participants: List<String>.from(json['participants']),
+      participants: ['participants']
     );
   }
 }

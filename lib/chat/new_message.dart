@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:untitled1/user_info.dart';
-import 'package:flutter/foundation.dart';
-
 
 class NewMessage extends StatefulWidget {
-  const NewMessage({super.key});
+  final String planId; // planId를 받도록 수정
+
+  const NewMessage({super.key, required this.planId});
 
   @override
   State<NewMessage> createState() => _NewMessageState();
@@ -23,16 +23,20 @@ class _NewMessageState extends State<NewMessage> {
     super.initState();
     userInfo = UserInfo(); // UserInfo 초기화
     userEmail = userInfo.userEmail ?? ''; // 이메일 설정
-    username = userEmail.split('@')[0];// 사용자 이름 설정
+    username = userEmail.split('@')[0]; // 사용자 이름 설정
   }
 
   void _sendMessage() async {
     FocusScope.of(context).unfocus();
-    FirebaseFirestore.instance.collection('chatting').add({
-      'text' : _userEnterMessage,
+    FirebaseFirestore.instance
+        .collection('plans')
+        .doc(widget.planId) // widget.planId 사용
+        .collection('chat_room')
+        .add({
+      'text': _userEnterMessage,
       'time': FieldValue.serverTimestamp(),
-      'userID' : userEmail,
-      'userName' : username
+      'userID': userEmail,
+      'userName': username
     });
     _controller.clear();
   }

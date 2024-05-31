@@ -46,13 +46,21 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
           .collection('plans')
           .where('userId', isEqualTo: userEmail)
           .get();
-
+      QuerySnapshot participantsQuerySnapshot = await firestoreInstance
+          .collection('plans')
+          .where('participants', arrayContains: userEmail)
+          .get();
       List<Plan> fetchedPlans = querySnapshot.docs.map((doc) {
         final planData = doc.data() as Map<String, dynamic>;
         planData['id'] = doc.id; // 문서의 ID를 'id' 필드에 할당
         return Plan.fromJson(planData);
       }).toList();
-
+      List<Plan> fetchedPlans1 = participantsQuerySnapshot.docs.map((doc) {
+        final planData = doc.data() as Map<String, dynamic>;
+        planData['id'] = doc.id; // 문서의 ID를 'id' 필드에 할당
+        return Plan.fromJson(planData);
+      }).toList();
+      fetchedPlans.addAll(fetchedPlans1);
       setState(() {
         _plans = fetchedPlans;
       });
@@ -222,11 +230,13 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
       final firestoreInstance = FirebaseFirestore.instance;
       DocumentReference documentReference =
           await firestoreInstance.collection('plans').add(updatedPlan.toJson());
-      _planId = documentReference.id; // Firestore에서 생성된 id를 가져옴
+        _planId = documentReference.id; // Firestore에서 생성된 id를 가져옴
       updatedPlan = updatedPlan.copyWith(id: _planId); // Plan 객체에 가져온 id를 설정
       await firestoreInstance
           .collection('plans')
           .doc(_planId)
+          .collection('chat_room')
+          .doc('welcome')
           .set(updatedPlan.toJson());
       setState(() {
         _plans.add(updatedPlan);
