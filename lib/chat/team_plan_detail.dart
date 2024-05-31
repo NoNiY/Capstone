@@ -17,35 +17,22 @@ class PlanDetailsScreen extends StatefulWidget {
 
 class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
   List<String> _participants = [];
-  List<Plan> _plans = [];
+
   @override
   void initState() {
     super.initState();
-    _participants = List.from(widget.plan.participants);
-    _fetchPlans();
+    _fetchParticipants();
   }
-  Future<void> _fetchPlans() async {
-    final userInfo = UserInfo();
-    String userEmail = userInfo.userEmail ?? '';
 
+  Future<void> _fetchParticipants() async {
     try {
-      final firestoreInstance = FirebaseFirestore.instance;
-
-      // 현재 계획이 아닌 모든 계획에 대한 참여자를 가져오기 위해 별도의 쿼리 필요
-      QuerySnapshot allPlansSnapshot = await firestoreInstance
+      DocumentSnapshot doc = await FirebaseFirestore.instance
           .collection('plans')
-          .where('participants', arrayContains: userEmail)
+          .doc(widget.plan.id)
           .get();
-
-      // 중복된 참여자를 제거하고 _participants에 저장
-      List<String> participants = [];
-      allPlansSnapshot.docs.forEach((doc) {
-        List<String> docParticipants = ((doc.data() as Map<String, dynamic>?)?['participants'] as List<dynamic>?)?.map((participant) => participant.toString())?.toList() ?? [];
-        participants.addAll(docParticipants.whereType<String>().where((participant) => participant != userEmail));
-      });
-
+      List<String> participants = List.from(doc['participants']);
       setState(() {
-        _participants = participants.toSet().toList(); // 중복 제거를 위해 Set 활용
+        _participants = participants;
       });
     } catch (e) {
       debugPrint('Firestore에서 데이터 가져오기 중 오류 발생: $e');
@@ -85,15 +72,11 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                _addParticipant();
-              },
+              onPressed: _addParticipant,
               child: const Text('참여자 추가'),
             ),
             ElevatedButton(
-              onPressed: () {
-                _deletePlan(context);
-              },
+              onPressed: () => _navigateToChat(context),
               child: const Text('채팅방'),
             ),
           ],
@@ -116,10 +99,18 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                setState(() {
-                  _participants.add(controller.text);
-                  controller.clear(); // 입력 필드 비우기
-                });
+                if (controller.text.isNotEmpty) {
+                  setState(() {
+                    _participants.add(controller.text);
+                  });
+                  FirebaseFirestore.instance
+                      .collection('plans')
+                      .doc(widget.plan.id)
+                      .update({
+                    'participants': FieldValue.arrayUnion([controller.text])
+                  });
+                  controller.clear();
+                }
                 Navigator.of(context).pop();
               },
               child: const Text('추가'),
@@ -136,33 +127,14 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
     );
   }
 
-  void _deletePlan(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('채팅방'),
-          content: const Text('채팅방으로 이동하겠습니까?'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (BuildContext context) {
-                  return ChatScreen(planId: widget.plan.id);
-                }));
-              },
-              child: const Text('확인'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('취소'),
-            ),
-          ],
-        );
-      },
+  void _navigateToChat(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return ChatScreen(planId: widget.plan.id);
+        },
+      ),
     );
   }
 }
