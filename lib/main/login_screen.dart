@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:untitled1/main/home_screen.dart';
 import 'package:untitled1/main/main_screen.dart';
 
+
+
 class LoginSignupScreen extends StatefulWidget {
   const LoginSignupScreen({super.key});
 
@@ -19,7 +21,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
   String userName = '';
   String userEmail = '';
   String userPassword = '';
-
+  bool _obscureText = true;
   final TextEditingController _textController =
       TextEditingController(); // 이 부분에 추가
   final FocusNode _userNameFocus = FocusNode();
@@ -30,7 +32,11 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
       _formKey.currentState!.save();
     }
   }
-
+  void _togglePasswordVisibility() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
   @override
   void dispose() {
     _textController.dispose(); // 사용이 끝난 후에는 해제해주어야 합니다.
@@ -365,7 +371,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   validator: (value) {
                                     if (value!.isEmpty ||
                                         !value.contains('@')) {
-                                      return 'Please enter a valid email address.';
+                                      return '올바른 이메일을 입력해주세요.';
                                     }
                                     return null;
                                   },
@@ -414,11 +420,12 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   height: 8.0,
                                 ),
                                 TextFormField(
-                                  obscureText: false, // 이 부분을 수정함
+
+                                  obscureText: _obscureText, // 이 부분을 수정함
                                   key: const ValueKey(5),
                                   validator: (value) {
                                     if (value!.isEmpty || value.length < 6) {
-                                      return 'Password must be at least 7 characters long.';
+                                      return '올바른 비밀번호를 입력해주세요.';
                                     }
                                     return null;
                                   },
@@ -436,9 +443,14 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   onFieldSubmitted: (value) {
                                     _resetTyping();
                                   },
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     prefixIcon: Icon(
                                       Icons.lock,
+                                      color: Palette.iconColor,
+                                    ),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off), // 눈 아이콘 토글
+                                      onPressed: _togglePasswordVisibility, // 토글 함수 호출
                                       color: Palette.iconColor,
                                     ),
                                     enabledBorder: OutlineInputBorder(
@@ -459,6 +471,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                     hintStyle: TextStyle(
                                       fontSize: 14,
                                       color: Palette.textColor1,
+
                                     ),
                                     contentPadding: EdgeInsets.all(10),
                                   ),
