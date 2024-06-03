@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:untitled1/Plan/calendar_screen.dart';
+import 'package:untitled1/Setting/setting_home.dart';
 import 'package:untitled1/chat/team_plan_screen.dart';
 import 'package:untitled1/main/log_out.dart';
 import 'package:untitled1/main/main_screen.dart';
@@ -22,7 +23,7 @@ class _HomePageState extends State<HomePage> {
     TeamPlanScreen(),
     MainScreen(),
     MainCharacterScreen(),
-    LogoutScreen()
+    SettingScreen()
   ];
 
   @override

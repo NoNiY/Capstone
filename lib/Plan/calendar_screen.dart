@@ -185,16 +185,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Widget build(BuildContext context) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Calendar'),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomePage()),
-                );
-              },
-            ),
+            title: const Text('계획'),
+            automaticallyImplyLeading: false,
+
           ),
           body: Column(
             children: [
@@ -443,7 +436,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             _showPlanScreen(null, initialDate: _selectedDay ?? _focusedDay);
           },
           icon: const Icon(Icons.add),
-          label: const Text('Add Plan'),
+          label: const Text('계획 추가'),
         ),
         ElevatedButton.icon(
           onPressed: () async {
@@ -464,7 +457,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             }
           },
           icon: const Icon(Icons.list),
-          label: const Text('Plan List'),
+          label: const Text('계획 목록'),
         ),
       ],
     );
