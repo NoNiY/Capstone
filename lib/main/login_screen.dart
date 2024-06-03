@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:untitled1/config/palette.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:untitled1/main/home_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:untitled1/main/main_screen.dart';
 
 
@@ -15,6 +16,7 @@ class LoginSignupScreen extends StatefulWidget {
 
 class _LoginSignupScreenState extends State<LoginSignupScreen> {
   final _authentication = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
   bool isTyping = false;
   bool isSignupScreen = true;
   final _formKey = GlobalKey<FormState>();
@@ -23,7 +25,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
   String userPassword = '';
   bool _obscureText = true;
   final TextEditingController _textController =
-      TextEditingController(); // 이 부분에 추가
+  TextEditingController(); // 이 부분에 추가
   final FocusNode _userNameFocus = FocusNode();
 
   void _tryValidation() {
@@ -48,6 +50,23 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
     setState(() {
       isTyping = false;
     });
+  }
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Error'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Okay'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          )
+        ],
+      ),
+    );
   }
 
   @override
@@ -228,14 +247,14 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                     ),
                                     enabledBorder: OutlineInputBorder(
                                       borderSide:
-                                          BorderSide(color: Palette.textColor1),
+                                      BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderSide:
-                                          BorderSide(color: Palette.textColor1),
+                                      BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
@@ -282,14 +301,14 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                     ),
                                     enabledBorder: OutlineInputBorder(
                                       borderSide:
-                                          BorderSide(color: Palette.textColor1),
+                                      BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderSide:
-                                          BorderSide(color: Palette.textColor1),
+                                      BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
@@ -306,7 +325,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   height: 8,
                                 ),
                                 TextFormField(
-                                  obscureText: false, // 이 부분을 수정함
+                                  obscureText: true, // 이 부분을 수정함
                                   key: const ValueKey(3),
                                   validator: (value) {
                                     if (value!.isEmpty || value.length < 6) {
@@ -335,14 +354,14 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                     ),
                                     enabledBorder: OutlineInputBorder(
                                       borderSide:
-                                          BorderSide(color: Palette.textColor1),
+                                      BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderSide:
-                                          BorderSide(color: Palette.textColor1),
+                                      BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
@@ -396,14 +415,14 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                     ),
                                     enabledBorder: OutlineInputBorder(
                                       borderSide:
-                                          BorderSide(color: Palette.textColor1),
+                                      BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderSide:
-                                          BorderSide(color: Palette.textColor1),
+                                      BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
@@ -420,8 +439,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                   height: 8.0,
                                 ),
                                 TextFormField(
-
-                                  obscureText: _obscureText, // 이 부분을 수정함
+                                  obscureText: true, // 이 부분을 수정함
                                   key: const ValueKey(5),
                                   validator: (value) {
                                     if (value!.isEmpty || value.length < 6) {
@@ -455,14 +473,14 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                     ),
                                     enabledBorder: OutlineInputBorder(
                                       borderSide:
-                                          BorderSide(color: Palette.textColor1),
+                                      BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderSide:
-                                          BorderSide(color: Palette.textColor1),
+                                      BorderSide(color: Palette.textColor1),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(35.0),
                                       ),
@@ -506,31 +524,26 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                       email: userEmail,
                                       password: userPassword,
                                     );
-
-                                    if (newUser.user != null) {
-                                      if (context.mounted) {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) {
-                                              return const HomePage();
-                                            },
-                                          ),
-                                        );
-                                      }
-                                    }
-                                  } catch (e) {
-                                    debugPrint(e.toString());
+                                    await _firestore
+                                        .collection('users')
+                                        .doc(newUser.user!.uid)
+                                        .set({
+                                      'email': userEmail,
+                                      'name': userName, // 사용자 이름 추가
+                                      'points': 0,
+                                      'exp':0,
+                                    });
                                     if (context.mounted) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                              'Please check your email and password'),
-                                          backgroundColor: Colors.blue,
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => const HomePage(),
                                         ),
                                       );
                                     }
+                                  } catch (e) {
+                                    print(e);
+                                    _showErrorDialog('아이디 혹은 비밀번호가 잘못되었습니다');
                                   }
                                 }
                                 if (!isSignupScreen) {
@@ -554,7 +567,8 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                                       }
                                     }
                                   } catch (e) {
-                                    debugPrint(e.toString());
+                                    print(e);
+                                    _showErrorDialog('아이디 혹은 비밀번호가 잘못되었습니다');
                                   }
                                 }
                               },
@@ -593,21 +607,18 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                             TextButton.icon(
                               onPressed: () async {
                                 try {
-                                  final userCredential = await _authentication
-                                      .signInWithPopup(GoogleAuthProvider());
+                                  final userCredential = await _authentication.signInWithPopup(GoogleAuthProvider());
                                   final user = userCredential.user;
                                   if (user != null) {
                                     if (context.mounted) {
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const HomePage()),
+                                        MaterialPageRoute(builder: (context) => const HomePage()),
                                       );
                                     }
                                   }
                                 } catch (e) {
-                                  debugPrint('Google Sign-in Error: $e');
+                                  _showErrorDialog(e.toString());
                                 }
                               },
                               style: TextButton.styleFrom(

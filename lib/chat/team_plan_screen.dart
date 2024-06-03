@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:table_calendar/table_calendar.dart';
 import 'package:untitled1/chat/team_plan_detail.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:untitled1/user_info.dart';
 import 'package:untitled1/chat/_teamplan.dart';
+import 'package:untitled1/Plan/calendar_screen.dart';
 
 class TeamPlanScreen extends StatelessWidget {
   const TeamPlanScreen({super.key});
@@ -18,18 +20,24 @@ class TeamPlanScreen extends StatelessWidget {
 
 class TeamPlanListScreen extends StatefulWidget {
   const TeamPlanListScreen({super.key});
-
+  
   @override
   State<TeamPlanListScreen> createState() => _TeamPlanListScreenState();
 }
 
 class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
   DateTime? _startDate;
+  TimeOfDay? _startTime;
   DateTime? _endDate;
+  TimeOfDay? _endTime;
+  CalendarFormat _calendarFormat = CalendarFormat.month;
+  DateTime _selectedDay = DateTime.now();
+  DateTime _focusedDay = DateTime.now();
   List<String> _participants = [];
   final TextEditingController _descriptionController = TextEditingController();
   List<Plan> _plans = [];
   String? _planId;
+
   @override
   void initState() {
     super.initState();
@@ -79,45 +87,39 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
     );
 
     if (pickedDate != null) {
-      // 시작일 선택 시
-      if (isStartDate) {
-        setState(() {
+      setState(() {
+        if (isStartDate) {
           _startDate = pickedDate;
-          _endDate = null; // 시작일을 선택할 때마다 종료일 초기화
-        });
-      }
-      // 종료일 선택 시
-      else {
-        // 시작일이 설정되어 있고 선택한 날짜가 시작일 이전인 경우
-        if (_startDate != null && pickedDate.isBefore(_startDate!)) {
-          if (context.mounted) {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text('날짜 선택 오류'),
-                  content: const Text('종료일은 시작일 이후의 날짜로 선택해주세요.'),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('확인'),
-                    ),
-                  ],
-                );
-              },
-            );
-          }
-          return null; // 종료일이 시작일 이전이면 선택한 날짜를 취소하고 종료
-        }
-        setState(() {
+          _endDate = pickedDate; // 시작일을 선택하면 종료일도 같은 날로 설정
+        } else {
           _endDate = pickedDate;
-        });
-      }
+          _startDate = pickedDate; // 종료일을 선택하면 시작일도 같은 날로 설정
+        }
+      });
     }
 
     return pickedDate;
+  }
+
+  Future<TimeOfDay?> _selectTime(BuildContext context, bool isStartTime) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (pickedTime != null) {
+      setState(() {
+        if (isStartTime) {
+          _startTime = pickedTime;
+          _endTime = pickedTime.replacing(hour: pickedTime.hour + 1); // 시작 시간을 선택하면 종료 시간은 1시간 뒤로 설정
+        } else {
+          _endTime = pickedTime;
+          _startTime = pickedTime.replacing(hour: pickedTime.hour - 1); // 종료 시간을 선택하면 시작 시간은 1시간 앞으로 설정
+        }
+      });
+    }
+
+    return pickedTime;
   }
 
   void _addParticipant(StateSetter setState) {
@@ -166,7 +168,9 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   _buildDateSelector('시작일', _startDate, true, setState),
+                  _buildTimeSelector('시작 시간', _startTime, true, setState),
                   _buildDateSelector('종료일', _endDate, false, setState),
+                  _buildTimeSelector('종료 시간', _endTime, false, setState),
                   const SizedBox(height: 16),
                   TextField(
                     controller: _descriptionController,
@@ -216,13 +220,31 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
 
     // Null 체크 및 기본값 설정
     DateTime startDate = _startDate ?? DateTime.now();
+    TimeOfDay startTime = _startTime ?? TimeOfDay.now();
     DateTime endDate = _endDate ?? DateTime.now();
+    TimeOfDay endTime = _endTime ?? TimeOfDay.now();
+
+    DateTime startDateTime = DateTime(
+      startDate.year,
+      startDate.month,
+      startDate.day,
+      startTime.hour,
+      startTime.minute,
+    );
+
+    DateTime endDateTime = DateTime(
+      endDate.year,
+      endDate.month,
+      endDate.day,
+      endTime.hour,
+      endTime.minute,
+    );
 
     Plan updatedPlan = Plan(
       userId: userEmail,
       name: _descriptionController.text,
-      startDate: startDate,
-      endDate: endDate,
+      startDate: startDateTime,
+      endDate: endDateTime,
       participants: _participants,
     );
 
@@ -230,7 +252,7 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
       final firestoreInstance = FirebaseFirestore.instance;
       DocumentReference documentReference =
           await firestoreInstance.collection('plans').add(updatedPlan.toJson());
-        _planId = documentReference.id; // Firestore에서 생성된 id를 가져옴
+      _planId = documentReference.id; // Firestore에서 생성된 id를 가져옴
       updatedPlan = updatedPlan.copyWith(id: _planId); // Plan 객체에 가져온 id를 설정
       await firestoreInstance
           .collection('plans')
@@ -241,7 +263,9 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
       setState(() {
         _plans.add(updatedPlan);
         _startDate = null; // 추가 후 초기화
-        _endDate = null;
+        _startTime = null; // 추가 후 초기화
+        _endDate = null; // 추가 후 초기화
+        _endTime = null; // 추가 후 초기화
         _planId = null; // 추가 후 초기화
         _participants = []; // 추가 후 초기화
         _descriptionController.clear(); // 추가 후 초기화
@@ -267,6 +291,31 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          TableCalendar(
+            firstDay: DateTime.utc(2010, 10, 16),
+            lastDay: DateTime.utc(2030, 3, 14),
+            focusedDay: _focusedDay,
+            calendarFormat: _calendarFormat,
+            selectedDayPredicate: (day) {
+              return isSameDay(_selectedDay, day);
+            },
+            onDaySelected: (selectedDay, focusedDay) {
+              setState(() {
+                _selectedDay = selectedDay;
+                _focusedDay = focusedDay;
+              });
+            },
+            onFormatChanged: (format) {
+              if (_calendarFormat != format) {
+                setState(() {
+                  _calendarFormat = format;
+                });
+              }
+            },
+            onPageChanged: (focusedDay) {
+              _focusedDay = focusedDay;
+            },
+          ),
           const SizedBox(height: 16),
           Expanded(
             child: _buildPlanList(),
@@ -287,9 +336,9 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
       itemBuilder: (context, index) {
         final plan = _plans[index];
         return ListTile(
-          title: Text(plan.name), // 변경: 'description' -> 'name'
+          title: Text(plan.name),
           subtitle: Text(
-            '${DateFormat('yyyy-MM-dd').format(plan.startDate)} ~ ${DateFormat('yyyy-MM-dd').format(plan.endDate)}',
+            '${DateFormat('yyyy-MM-dd HH:mm').format(plan.startDate)} ~ ${DateFormat('yyyy-MM-dd HH:mm').format(plan.endDate)}',
           ),
           trailing: IconButton(
             icon: const Icon(Icons.delete),
@@ -360,8 +409,7 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
     );
   }
 
-  Widget _buildDateSelector(
-      String label, DateTime? date, bool isStartDate, StateSetter setState) {
+  Widget _buildDateSelector(String label, DateTime? date, bool isStartDate, StateSetter setState) {
     return Row(
       children: <Widget>[
         Text(label),
@@ -373,14 +421,44 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
               setState(() {
                 if (isStartDate) {
                   _startDate = pickedDate;
+                  _endDate = pickedDate; // 시작일을 선택하면 종료일도 같은 날로 설정
                 } else {
                   _endDate = pickedDate;
+                  _startDate = pickedDate; // 종료일을 선택하면 시작일도 같은 날로 설정
                 }
               });
             }
           },
           child: Text(
             date == null ? '날짜 선택' : DateFormat('yyyy-MM-dd').format(date),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTimeSelector(String label, TimeOfDay? time, bool isStartTime, StateSetter setState) {
+    return Row(
+      children: <Widget>[
+        Text(label),
+        const SizedBox(width: 16),
+        ElevatedButton(
+          onPressed: () async {
+            final pickedTime = await _selectTime(context, isStartTime);
+            if (pickedTime != null) {
+              setState(() {
+                if (isStartTime) {
+                  _startTime = pickedTime;
+                  _endTime = pickedTime.replacing(hour: pickedTime.hour + 1); // 시작 시간을 선택하면 종료 시간은 1시간 뒤로 설정
+                } else {
+                  _endTime = pickedTime;
+                  _startTime = pickedTime.replacing(hour: pickedTime.hour - 1); // 종료 시간을 선택하면 시작 시간은 1시간 앞으로 설정
+                }
+              });
+            }
+          },
+          child: Text(
+            time == null ? '시간 선택' : time.format(context),
           ),
         ),
       ],

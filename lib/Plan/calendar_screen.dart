@@ -108,9 +108,24 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   Future<void> _persistPlans() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonPlans = _plans.map((plan) => jsonEncode(plan.toJson())).toList();
-    await prefs.setStringList('plans', jsonPlans);
+    final userInfo = UserInfo();
+    String userEmail = userInfo.userEmail ?? '';
+
+    try {
+      final firestoreInstance = FirebaseFirestore.instance;
+      WriteBatch batch = firestoreInstance.batch();
+
+      for (var plan in _plans) {
+        DocumentReference docRef = firestoreInstance.collection(userEmail).doc(plan.id);
+        batch.set(docRef, plan.toJson());
+      }
+
+      await batch.commit();
+      debugPrint('Plans saved to Firestore successfully');
+    } catch (e) {
+      debugPrint('Error saving plans to Firestore: $e');
+      // 에러 처리를 추가할 수 있습니다.
+    }
   }
 
   Future<void> _retrievePlans() async {

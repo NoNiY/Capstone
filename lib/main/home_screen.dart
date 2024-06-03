@@ -6,7 +6,7 @@ import 'package:untitled1/main/log_out.dart';
 import 'package:untitled1/main/main_screen.dart';
 import 'package:untitled1/shop_screen.dart';
 import 'package:untitled1/character/main_character.dart';
-import '../character/store_image.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key});

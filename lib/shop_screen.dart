@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key});
@@ -10,118 +10,53 @@ class ShopScreen extends StatefulWidget {
 }
 
 class _ShopScreenState extends State<ShopScreen> {
-  int _points = 10000; // 초기 포인트 값
-  int _selectedIndex = 0; // 추가: 현재 선택된 bottom navigation bar의 아이템 인덱스
+  int _points = 0;
+  int _selectedIndex = 0;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late User? _user;
+
+  @override
+  void initState() {
+    super.initState();
+    _user = _auth.currentUser;
+    if (_user != null) {
+      _loadUserPoints();
+    }
+  }
+
+  Future<void> _loadUserPoints() async {
+    try {
+      DocumentSnapshot userDoc =
+      await _firestore.collection('users').doc(_user!.uid).get();
+      if (userDoc.exists) {
+        setState(() {
+          _points = userDoc['points'];
+        });
+      }
+    } catch (e) {
+      print('Error loading user points: $e');
+    }
+  }
+
+  Future<void> _updateUserPoints(int newPoints) async {
+    try {
+      await _firestore
+          .collection('users')
+          .doc(_user!.uid)
+          .update({'points': newPoints});
+      setState(() {
+        _points = newPoints;
+      });
+    } catch (e) {
+      print('Error updating user points: $e');
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-  }
-
-  Widget _buildProductsContainer(BuildContext context) {
-    return Container(
-      color: const Color(0xFFFFFCD3), // 배경색 설정
-      padding: const EdgeInsets.all(10.0),
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(), // 스크롤이 항상 가능하도록 설정
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 1.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox(width: 16.0),
-                Expanded(
-                  child: _buildProduct(context, '여름바지', 'P', '100',
-                      const Color(0xFFC3D49F), 'assets/images/image_69.png'),
-                ),
-                const SizedBox(width: 16.0),
-                Expanded(
-                  child: _buildProduct(context, '청바지', 'P', '200',
-                      const Color(0xFFC3D49F), 'assets/images/image_69.png'),
-                ),
-                const SizedBox(width: 16.0),
-                Expanded(
-                  child: _buildProduct(context, '와이셔츠', 'P', '300',
-                      const Color(0xFFC3D49F), 'assets/images/image_69.png'),
-                ),
-                const SizedBox(width: 16.0),
-              ],
-            ),
-            const SizedBox(height: 1.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox(width: 16.0),
-                Expanded(
-                  child: _buildProduct(context, '여름바지', 'P', '100',
-                      const Color(0xFFC3D49F), 'assets/images/image_69.png'),
-                ),
-                const SizedBox(width: 16.0),
-                Expanded(
-                  child: _buildProduct(context, '청바지', 'P', '200',
-                      const Color(0xFFC3D49F), 'assets/images/image_69.png'),
-                ),
-                const SizedBox(width: 16.0),
-                Expanded(
-                  child: _buildProduct(context, '와이셔츠', 'P', '300',
-                      const Color(0xFFC3D49F), 'assets/images/image_69.png'),
-                ),
-                const SizedBox(width: 16.0),
-              ],
-            ),
-            const SizedBox(height: 1.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox(width: 16.0),
-                Expanded(
-                  child: _buildProduct(context, '여름바지', 'P', '5000',
-                      const Color(0xFFC3D49F), 'assets/images/image_69.png'),
-                ),
-                const SizedBox(width: 16.0),
-                Expanded(
-                  child: _buildProduct(context, '청바지', 'P', '200',
-                      const Color(0xFFC3D49F), 'assets/images/image_69.png'),
-                ),
-                const SizedBox(width: 16.0),
-                Expanded(
-                  child: _buildProduct(context, '와이셔츠', 'P', '300',
-                      const Color(0xFFC3D49F), 'assets/images/image_69.png'),
-                ),
-                const SizedBox(width: 16.0),
-              ],
-            ),
-            const SizedBox(height: 1.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox(width: 16.0),
-                Expanded(
-                  child: _buildProduct(context, '여름바지', 'P', '5000',
-                      const Color(0xFFC3D49F), 'assets/images/image_69.png'),
-                ),
-                const SizedBox(width: 16.0),
-                Expanded(
-                  child: _buildProduct(context, '청바지', 'P', '200',
-                      const Color(0xFFC3D49F), 'assets/images/image_69.png'),
-                ),
-                const SizedBox(width: 16.0),
-                Expanded(
-                  child: _buildProduct(context, '와이셔츠', 'P', '300',
-                      const Color(0xFFC3D49F), 'assets/images/image_69.png'),
-                ),
-                const SizedBox(width: 16.0),
-              ],
-            ),
-            const SizedBox(height: 1.0),
-            const SizedBox(height: 100.0), // 추가된 여백
-          ],
-        ),
-      ),
-    );
   }
 
   @override
@@ -131,14 +66,14 @@ class _ShopScreenState extends State<ShopScreen> {
         preferredSize: const Size.fromHeight(kToolbarHeight - 20),
         child: Container(
           decoration: const BoxDecoration(
-            color: Colors.green, // 배경색 설정
+            color: Colors.green,
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(20.0),
               bottomRight: Radius.circular(20.0),
             ),
           ),
           child: const Padding(
-            padding: EdgeInsets.only(top: 25.0), // SHOP 글씨 위치를 조금 내림
+            padding: EdgeInsets.only(top: 25.0),
             child: Center(
               child: Text(
                 'SHOP',
@@ -153,7 +88,6 @@ class _ShopScreenState extends State<ShopScreen> {
         ),
       ),
       body: Container(
-        // 화면을 꽉 채우는 배경색 추가
         color: const Color(0xFFFFFCD3),
         child: Stack(
           children: [
@@ -182,7 +116,7 @@ class _ShopScreenState extends State<ShopScreen> {
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(8.0), //p 크기
+                              padding: const EdgeInsets.all(8.0),
                               decoration: const BoxDecoration(
                                 color: Colors.lightBlue,
                                 shape: BoxShape.circle,
@@ -195,7 +129,7 @@ class _ShopScreenState extends State<ShopScreen> {
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
-                            const SizedBox(width: 5.0), // 추가된 부분
+                            const SizedBox(width: 5.0),
                             Text(
                               '$_points',
                               style: const TextStyle(
@@ -205,8 +139,8 @@ class _ShopScreenState extends State<ShopScreen> {
                         ),
                         IconButton(
                           icon: Image.asset(
-                            'assets/images/back_icon.png', // 뒤로가기 아이콘의 이미지 경로
-                            width: 50, // 이미지 크기 조정
+                            'assets/images/back_icon.png',
+                            width: 50,
                             height: 50,
                           ),
                           onPressed: () {
@@ -227,49 +161,110 @@ class _ShopScreenState extends State<ShopScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event),
-            label: '계획',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people),
-            label: '팀 계획',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '홈',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.supervised_user_circle), // "캐릭터" 아이콘 추가
-            label: '캐릭터',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings), // "설정" 아이콘 추가
-            label: '설정',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.black, // 기본 색상을 검은색으로 설정
-        onTap: _onItemTapped,
-        elevation: 100, // 절취선 두께 설정
-        selectedIconTheme: const IconThemeData(color: Colors.blue, size: 30),
-        unselectedIconTheme: const IconThemeData(color: Colors.black, size: 30),
+    );
+  }
+
+  Widget _buildProductsContainer(BuildContext context) {
+    return Container(
+      color: const Color(0xFFFFFCD3),
+      padding: const EdgeInsets.all(10.0),
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 1.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: _buildProduct(context, '밀짚모자', 'P', '100', const Color(0xFFC3D49F), 'assets/images/image_101.png'),
+                ),
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: _buildProduct(context, '캡모자', 'P', '200', const Color(0xFFC3D49F), 'assets/images/image_102.png'),
+                ),
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: _buildProduct(context, '마술모자', 'P', '300', const Color(0xFFC3D49F), 'assets/images/image_104.png'),
+                ),
+                const SizedBox(width: 16.0),
+              ],
+            ),
+            const SizedBox(height: 1.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: _buildProduct(context, '반팔티', 'P', '100', const Color(0xFFC3D49F), 'assets/images/image_105.png'),
+                ),
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: _buildProduct(context, '나시', 'P', '200', const Color(0xFFC3D49F), 'assets/images/image_107.png'),
+                ),
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: _buildProduct(context, '와이셔츠', 'P', '300', const Color(0xFFC3D49F), 'assets/images/image_106.png'),
+                ),
+                const SizedBox(width: 16.0),
+              ],
+            ),
+            const SizedBox(height: 1.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: _buildProduct(context, '여름반바지', 'P', '100', const Color(0xFFC3D49F), 'assets/images/image_109.png'),
+                ),
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: _buildProduct(context, '청바지', 'P', '200', const Color(0xFFC3D49F), 'assets/images/image_108.png'),
+                ),
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: _buildProduct(context, '정장바지', 'P', '300', const Color(0xFFC3D49F), 'assets/images/image_110.png'),
+                ),
+                const SizedBox(width: 16.0),
+              ],
+            ),
+            const SizedBox(height: 1.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: _buildProduct(context, '귀걸이', 'P', '100', const Color(0xFFC3D49F), 'assets/images/image_111.png'),
+                ),
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: _buildProduct(context, '반지', 'P', '200', const Color(0xFFC3D49F), 'assets/images/image_112.png'),
+                ),
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: _buildProduct(context, '팔찌', 'P', '300', const Color(0xFFC3D49F), 'assets/images/image_114.png'),
+                ),
+                const SizedBox(width: 16.0),
+              ],
+            ),
+            const SizedBox(height: 1.0),
+            const SizedBox(height: 100.0),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildProduct(BuildContext context, String name, String type,
-      String price, Color color, String imageAsset) {
+  Widget _buildProduct(BuildContext context, String name, String type, String price, Color color, String imageAsset) {
     return GestureDetector(
       onTap: () {
         _showPurchaseDialog(context, name, int.parse(price));
       },
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 7.0), // 상하 여백을 늘림
-        padding: const EdgeInsets.symmetric(vertical: 7.0), // 박스 내부 여백을 늘림
+        margin: const EdgeInsets.symmetric(vertical: 7.0),
+        padding: const EdgeInsets.symmetric(vertical: 7.0),
         decoration: BoxDecoration(
           color: const Color(0xFFC3D49F),
           borderRadius: BorderRadius.circular(10.0),
@@ -278,20 +273,18 @@ class _ShopScreenState extends State<ShopScreen> {
           children: [
             Container(
               width: double.infinity,
-              height: 100.0, // 이미지 높이 설정
+              height: 100.0,
               color: color,
               child: Stack(
-                // 이름을 이미지 위에 표시하기 위해 Stack을 사용합니다.
                 children: [
                   Padding(
-                    padding:
-                        const EdgeInsets.only(top: 10.0), // 이미지를 아래로 내리는 부분
+                    padding: const EdgeInsets.only(top: 10.0),
                     child: Center(
                       child: Image.asset(
                         imageAsset,
-                        width: 80, // 이미지 크기 조절
-                        height: 80,
-                        fit: BoxFit.contain, // 이미지가 상자에 맞도록 조정
+                        width: 70,
+                        height: 70,
+                        fit: BoxFit.contain,
                       ),
                     ),
                   ),
@@ -313,14 +306,14 @@ class _ShopScreenState extends State<ShopScreen> {
             ),
             const Divider(
               height: 1.0,
-              thickness: 2.0, // 굵기 조정
+              thickness: 2.0,
               color: Colors.black,
-            ), // 절취선 추가
+            ),
             Row(
               children: [
-                const SizedBox(width: 7.0), // p 오른쪽으로 땡기기
+                const SizedBox(width: 7.0),
                 Container(
-                  padding: const EdgeInsets.all(8.0), //p 크기
+                  padding: const EdgeInsets.all(8.0),
                   decoration: const BoxDecoration(
                     color: Colors.lightBlue,
                     shape: BoxShape.circle,
@@ -351,10 +344,8 @@ class _ShopScreenState extends State<ShopScreen> {
     );
   }
 
-  void _showPurchaseDialog(
-      BuildContext context, String productName, int productPrice) {
+  void _showPurchaseDialog(BuildContext context, String productName, int productPrice) {
     if (_points < productPrice) {
-      // 포인트가 부족한 경우
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -364,7 +355,7 @@ class _ShopScreenState extends State<ShopScreen> {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); // 다이얼로그 닫기
+                  Navigator.of(context).pop();
                 },
                 child: const Text('확인'),
               ),
@@ -373,7 +364,6 @@ class _ShopScreenState extends State<ShopScreen> {
         },
       );
     } else {
-      // 포인트가 충분한 경우
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -383,16 +373,14 @@ class _ShopScreenState extends State<ShopScreen> {
             actions: [
               TextButton(
                 onPressed: () {
-                  setState(() {
-                    _points -= productPrice; // 제품 가격만큼 포인트 감소
-                  });
-                  Navigator.of(context).pop(); // 다이얼로그 닫기
+                  _updateUserPoints(_points - productPrice);
+                  Navigator.of(context).pop();
                 },
                 child: const Text('구입'),
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); // 다이얼로그 닫기
+                  Navigator.of(context).pop();
                 },
                 child: const Text('취소'),
               ),
