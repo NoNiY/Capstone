@@ -164,36 +164,39 @@ class _TeamPlanListScreenState extends State<TeamPlanListScreen> {
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
               title: const Text('새로운 계획 추가'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  _buildDateSelector('시작일', _startDate, true, setState),
-                  _buildTimeSelector('시작 시간', _startTime, true, setState),
-                  _buildDateSelector('종료일', _endDate, false, setState),
-                  _buildTimeSelector('종료 시간', _endTime, false, setState),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _descriptionController,
-                    decoration: const InputDecoration(labelText: '계획 내용'),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text('참여자'),
-                  Wrap(
-                    children: _participants.map((participant) {
-                      return Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Chip(
-                          label: Text(participant),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 8),
-                  ElevatedButton(
-                    onPressed: () => _addParticipant(setState),
-                    child: const Text('참여자 추가'),
-                  ),
-                ],
+              content: SingleChildScrollView( // SingleChildScrollView 추가
+                physics: AlwaysScrollableScrollPhysics(), // 스크롤 항상 활성화
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    _buildDateSelector('시작일', _startDate, true, setState),
+                    _buildTimeSelector('시작 시간', _startTime, true, setState),
+                    _buildDateSelector('종료일', _endDate, false, setState),
+                    _buildTimeSelector('종료 시간', _endTime, false, setState),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _descriptionController,
+                      decoration: const InputDecoration(labelText: '계획 내용'),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text('참여자'),
+                    Wrap(
+                      children: _participants.map((participant) {
+                        return Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Chip(
+                            label: Text(participant),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: () => _addParticipant(setState),
+                      child: const Text('참여자 추가'),
+                    ),
+                  ],
+                ),
               ),
               actions: <Widget>[
                 TextButton(

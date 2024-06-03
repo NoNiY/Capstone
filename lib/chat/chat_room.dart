@@ -16,18 +16,26 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final firestoreInstance = FirebaseFirestore.instance;
+  String? _planName; // Nullable로 변경
 
   @override
   void initState() {
     super.initState();
+    _fetchPlanDetails();
   }
+  Future<void> _fetchPlanDetails() async {
+    try {
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('plans')
+          .doc(widget.planId) // 받은 계획 ID를 사용하여 해당 계획의 데이터 가져오기
+          .get();
 
-  Future<String> _dday() async {
-    final userInfo = UserInfo();
-    DateTime userEnd = userInfo.endDate;
-    DateTime currentDate = DateTime.now();
-    int dDayToEnd = userEnd.difference(currentDate).inDays;
-    return dDayToEnd >= 0 ? 'D-$dDayToEnd' : 'D+${-dDayToEnd}';
+      setState(() {
+        _planName = doc['name']; // 계획 이름 가져오기
+      });
+    } catch (e) {
+      debugPrint('Firestore에서 데이터 가져오는 중 오류 발생: $e');
+    }
   }
 
   @override
@@ -37,11 +45,10 @@ class _ChatScreenState extends State<ChatScreen> {
         appBar: AppBar(
           elevation: 4,
           backgroundColor: Colors.blueGrey,
-          title: const Text("work"),
+          title: _planName != null ? Center(child: Text(_planName!)) : CircularProgressIndicator(),
           actions: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: _buildEndDateDdayText(),
+              padding: EdgeInsets.symmetric(vertical: 8.0),
             ),
           ],
         ),
@@ -54,24 +61,6 @@ class _ChatScreenState extends State<ChatScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildEndDateDdayText() {
-    return FutureBuilder<String>(
-      future: _dday(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          return Text(
-            '${snapshot.data}',
-            style: const TextStyle(fontSize: 30),
-          );
-        }
-      },
     );
   }
 }
