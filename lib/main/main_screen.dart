@@ -24,6 +24,8 @@ class _MainScreenState extends State<MainScreen> {
   late String _currentBackgroundImage;
   final _authentication = FirebaseAuth.instance;
   User? loggedUser;
+  int _exp = 0;
+  int _points = 0;
 
   @override
   void initState() {
@@ -31,6 +33,7 @@ class _MainScreenState extends State<MainScreen> {
     getCurrentUser();
     _currentCharacterImage = widget.characterImage ?? StoreImage.characterImage;
     _currentBackgroundImage = widget.backgroundImage ?? StoreImage.backgroundImage;
+    fetchUserData();
   }
 
   void getCurrentUser() {
@@ -38,10 +41,25 @@ class _MainScreenState extends State<MainScreen> {
       final user = _authentication.currentUser;
       if (user != null) {
         loggedUser = user;
-        debugPrint(loggedUser!.email);
+        debugPrint('Current user: ${loggedUser!.email}');
       }
     } catch (e) {
-      debugPrint(e as String?);
+      debugPrint('Error getting current user: $e');
+    }
+  }
+
+  Future<void> fetchUserData() async {
+    if (loggedUser != null) {
+      final doc = await FirebaseFirestore.instance.collection('users').doc(loggedUser!.uid).get();
+      if (doc.exists) {
+        debugPrint('User data: ${doc.data()}');
+        setState(() {
+          _exp = doc['exp'];
+          _points = doc['points'];
+        });
+      } else {
+        debugPrint('No such document!');
+      }
     }
   }
 
@@ -59,60 +77,66 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: Expanded(
-          child: Center(
-            child: Column(
-              children: <Widget>[
-                Container(
-                  width: 440,
-                  height: 740,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(_currentBackgroundImage),
-                      fit: BoxFit.cover, // 이미지가 부모 컨테이너에 꽉 차도록 설정
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Center(
-                        child: Image.asset(_currentCharacterImage),
-                      ),
-                      const Text(
-                        '10',
-                        style: TextStyle(fontSize: 40, color: Colors.black),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.star,
-                              color: Colors.amber,
-                            ),
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: LinearProgressIndicator(
-                                  value: 0.6, // 경험치의 비율을 나타내는 값 (0 ~ 1)
-                                  backgroundColor: Colors.grey[500],
-                                  valueColor:
-                                  const AlwaysStoppedAnimation<Color>(
-                                      Colors.blue),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+        body: Center(
+          child: Column(
+            children: <Widget>[
+              Container(
+                width: 440,
+                height: 740,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(_currentBackgroundImage),
+                    fit: BoxFit.cover,
                   ),
                 ),
-              ],
-            ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Center(
+                      child: Image.asset(_currentCharacterImage),
+                    ),
+                    Text(
+                      'Exp: $_exp',
+                      style: const TextStyle(fontSize: 20, color: Colors.white),
+                    ),
+                    Text(
+                      'Points: $_points',
+                      style: const TextStyle(fontSize: 20, color: Colors.white),
+                    ),
+                    const Text(
+                      '10',
+                      style: TextStyle(fontSize: 40, color: Colors.white),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: LinearProgressIndicator(
+                                value: 0.6,
+                                backgroundColor: Colors.grey[500],
+                                valueColor:
+                                const AlwaysStoppedAnimation<Color>(
+                                    Colors.blue),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

@@ -51,10 +51,10 @@ class ChangeCharacterScreen extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
+          const Expanded(
             child: AllCharacterStatus(),
           ),
-          GoToMainCharacterStatus(),
+          const GoToMainCharacterStatus(),
         ],
       ),
     );
@@ -87,7 +87,7 @@ class AllCharacterStatus extends StatelessWidget {
                           ),
                         );
                       },
-                      child: CharacterImage(
+                      child: const CharacterImage(
                         imagePath: 'assets/character/character1.png',
                         height: 350,
                         width: 350,
@@ -111,7 +111,7 @@ class AllCharacterStatus extends StatelessWidget {
                           ),
                         );
                       },
-                      child: CharacterImage(
+                      child: const CharacterImage(
                         imagePath: 'assets/character/character2.png',
                         height: 150,
                         width: 150,
@@ -142,7 +142,7 @@ class AllCharacterStatus extends StatelessWidget {
                           ),
                         );
                       },
-                      child: CharacterImage(
+                      child: const CharacterImage(
                         imagePath: 'assets/character/character3.png',
                         height: 150,
                         width: 150,
@@ -183,7 +183,7 @@ class AllCharacterStatus extends StatelessWidget {
                           },
                         );
                       },
-                      child: CharacterImage(
+                      child: const CharacterImage(
                         imagePath: 'assets/coming_soon.png',
                         height: 230,
                         width: 100,

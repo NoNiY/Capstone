@@ -47,6 +47,54 @@ class _PlanListScreenState extends State<PlanListScreen> {
     return querySnapshot.docs.map((doc) => Plan.fromJson(doc.data())).toList();
   }
 
+  Future<void> updateUserStats(String userId, int pointsToAdd, int expToAdd) async {
+  try {
+    // Firestore의 users 컬렉션 참조
+    final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
+
+    // Firestore 트랜잭션을 사용하여 points와 exp 동시에 업데이트
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      DocumentSnapshot snapshot = await transaction.get(userDoc);
+
+      if (!snapshot.exists) {
+        throw Exception("User does not exist!");
+      }
+
+      int currentPoints = snapshot['points'] ?? 0;
+      int currentExp = snapshot['exp'] ?? 0;
+
+      transaction.update(userDoc, {
+        'points': currentPoints + pointsToAdd,
+        'exp': currentExp + expToAdd,
+      });
+    });
+
+    print("User stats updated successfully!");
+  } catch (e) {
+    print("Failed to update user stats: $e");
+  }
+}
+
+Future<String?> getUserIdByEmail(String email) async {
+  try {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .limit(1)
+        .get();
+    
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first.id;
+    } else {
+      return null;
+    }
+  } catch (e) {
+    print("Failed to get user ID by email: $e");
+    return null;
+  }
+}
+
+
   Future<void> _retrievePlansFromFirestore() async {
     final userInfo = UserInfo();
     String userEmail = userInfo.userEmail ?? '';
@@ -251,36 +299,48 @@ class _PlanListScreenState extends State<PlanListScreen> {
   }
 
   Future<void> _showCompletionDialog(BuildContext context, Plan plan) async {
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Congratulations!'),
-          content: const Text('You have successfully completed the plan.'),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                setState(() {
-                  _plans.removeWhere((p) => p.id == plan.id);
-                  _selectedPlan = null;
-                });
+  await showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('Congratulations!'),
+        content: const Text('You have successfully completed the plan.'),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              setState(() {
+                _plans.removeWhere((p) => p.id == plan.id);
+                _selectedPlan = null;
+              });
 
-                final userInfo = UserInfo();
-                String userEmail = userInfo.userEmail ?? '';
+              final userInfo = UserInfo();
+              String userEmail = userInfo.userEmail ?? '';
 
-                await deletePlanFromFirestore(userEmail, plan.id);
-                await _retrievePlansFromFirestore();
-                if (context.mounted) {
-                  Navigator.pop(context);
-                }
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+              await deletePlanFromFirestore(userEmail, plan.id);
+              await _retrievePlansFromFirestore();
+
+              // 이메일을 통해 사용자 고유 ID를 가져와 포인트와 경험치 업데이트
+              String? userId = await getUserIdByEmail(userEmail);
+              if (userId != null) {
+                await updateUserStats(userId, 500, 100);
+              } else {
+                print("User ID not found for email: $userEmail");
+              }
+
+              if (context.mounted) {
+                Navigator.pop(context);
+              }
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+
+
 
   Future<void> _showIncompleteDialog(BuildContext context, Plan plan) async {
     await showDialog(

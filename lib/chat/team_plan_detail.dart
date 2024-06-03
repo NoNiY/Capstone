@@ -16,12 +16,26 @@ class PlanDetailsScreen extends StatefulWidget {
 }
 
 class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
+  late TimeOfDay _selectedTime;
   List<String> _participants = [];
 
   @override
   void initState() {
     super.initState();
+    _selectedTime = TimeOfDay.now();
     _fetchParticipants();
+  }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime,
+    );
+    if (picked != null && picked != _selectedTime) {
+      setState(() {
+        _selectedTime = picked;
+      });
+    }
   }
 
   Future<void> _fetchParticipants() async {
@@ -43,51 +57,6 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
       debugPrint('Firestore에서 데이터 가져오기 중 오류 발생: $e');
       // 예외 처리 코드 추가
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('계획 상세 정보'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              '계획 내용: ${widget.plan.name}',
-              style: const TextStyle(fontSize: 20),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              '시작일: ${DateFormat('yyyy-MM-dd').format(widget.plan.startDate)}',
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              '종료일: ${DateFormat('yyyy-MM-dd').format(widget.plan.endDate)}',
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              '참여자: ${_participants.join(', ')}',
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _addParticipant,
-              child: const Text('참여자 추가'),
-            ),
-            ElevatedButton(
-              onPressed: () => _navigateToChat(context),
-              child: const Text('채팅방'),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   void _addParticipant() {
@@ -139,6 +108,65 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
         builder: (BuildContext context) {
           return ChatScreen(planId: widget.plan.id);
         },
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final String formattedTime = DateFormat('hh:mm a').format(
+      DateTime(0, 0, 0, _selectedTime.hour, _selectedTime.minute),
+    );
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('계획 상세 정보'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              '계획 내용: ${widget.plan.name}',
+              style: const TextStyle(fontSize: 20),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              '시작일: ${DateFormat('yyyy-MM-dd').format(widget.plan.startDate)}',
+              style: const TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              '종료일: ${DateFormat('yyyy-MM-dd').format(widget.plan.endDate)}',
+              style: const TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              '참여자: ${_participants.join(', ')}',
+              style: const TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _addParticipant,
+              child: const Text('참여자 추가'),
+            ),
+            ElevatedButton(
+              onPressed: () => _navigateToChat(context),
+              child: const Text('채팅방'),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              "선택된 시간: $formattedTime",
+              style: const TextStyle(fontSize: 24),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => _selectTime(context),
+              child: const Text('시간 선택'),
+            ),
+          ],
+        ),
       ),
     );
   }
