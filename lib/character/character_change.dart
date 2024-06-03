@@ -100,7 +100,7 @@ class AllCharacterStatus extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 150),
+                    const SizedBox(height: 40),
                     GestureDetector(
                       onTap: () {
                         StoreImage.characterImage = 'assets/character/character2.png';
@@ -113,8 +113,8 @@ class AllCharacterStatus extends StatelessWidget {
                       },
                       child: CharacterImage(
                         imagePath: 'assets/character/character2.png',
-                        height: 150,
-                        width: 150,
+                        height: 350,
+                        width: 350,
                       ),
                     ),
                   ],
@@ -131,7 +131,7 @@ class AllCharacterStatus extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 0),
                     GestureDetector(
                       onTap: () {
                         StoreImage.characterImage = 'assets/character/character3.png';
@@ -144,8 +144,8 @@ class AllCharacterStatus extends StatelessWidget {
                       },
                       child: CharacterImage(
                         imagePath: 'assets/character/character3.png',
-                        height: 150,
-                        width: 150,
+                        height: 250,
+                        width: 350,
                       ),
                     ),
                   ],
