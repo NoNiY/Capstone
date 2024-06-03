@@ -8,6 +8,7 @@ import 'package:untitled1/main/log_out.dart';
 import 'package:untitled1/chat/chat_room.dart';
 import 'package:untitled1/character/main_character.dart';
 import '../character/store_image.dart';
+import 'package:untitled1/level_manager.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key, this.characterImage, this.backgroundImage});
@@ -26,6 +27,7 @@ class _MainScreenState extends State<MainScreen> {
   User? loggedUser;
   int _exp = 0;
   int _points = 0;
+  int _level = 0;
 
   @override
   void initState() {
@@ -56,12 +58,48 @@ class _MainScreenState extends State<MainScreen> {
         setState(() {
           _exp = doc['exp'];
           _points = doc['points'];
+          _level = LevelManager.calculateLevel(_exp);
         });
       } else {
         debugPrint('No such document!');
       }
     }
   }
+
+  void updateExp(int exp) {
+    setState(() {
+      _exp = exp;
+      int newLevel = LevelManager.calculateLevel(_exp);
+      if (newLevel != _level) {
+        _level = newLevel;
+        _updateUserLevel(_level);
+      }
+    });
+    _updateUserExp(_exp);
+  }
+
+  Future<void> _updateUserLevel(int level) async {
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(loggedUser!.uid).update({
+        'level': level,
+      });
+      debugPrint('Level updated to $level');
+    } catch (e) {
+      debugPrint('Error updating level: $e');
+    }
+  }
+
+  Future<void> _updateUserExp(int exp) async {
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(loggedUser!.uid).update({
+        'exp': exp,
+      });
+      debugPrint('Experience updated to $exp');
+    } catch (e) {
+      debugPrint('Error updating experience: $e');
+    }
+  }
+
 
   Future<List<Plan>> getPlansFromFirestore() async {
     final userEmail = loggedUser?.email;
@@ -75,6 +113,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double progress = LevelManager.getProgressToNextLevel(_exp);
+
     return MaterialApp(
       home: Scaffold(
         body: Center(
@@ -103,9 +143,9 @@ class _MainScreenState extends State<MainScreen> {
                       'Points: $_points',
                       style: const TextStyle(fontSize: 20, color: Colors.white),
                     ),
-                    const Text(
-                      '10',
-                      style: TextStyle(fontSize: 40, color: Colors.white),
+                    Text(
+                      'Level: $_level',
+                      style: const TextStyle(fontSize: 40, color: Colors.white),
                     ),
                     Container(
                       decoration: BoxDecoration(
@@ -122,7 +162,7 @@ class _MainScreenState extends State<MainScreen> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: LinearProgressIndicator(
-                                value: 0.6,
+                                value: progress,
                                 backgroundColor: Colors.grey[500],
                                 valueColor:
                                 const AlwaysStoppedAnimation<Color>(
